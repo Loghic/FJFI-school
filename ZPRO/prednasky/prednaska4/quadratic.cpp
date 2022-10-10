@@ -3,50 +3,53 @@
 
 using namespace std;
 
-enum struct Druh{Realne, Komplexni};
+enum struct Type{Real, Complex};
 enum {a1 , b1 , c1 , x1=0 , x2};
 
-struct Vysledek
+struct Result
 {
-    Druh druh;
-    double vysledek[2]{};
+    Type myType;
+    double result[2]{};
 
 };
 
-Vysledek ResKvadratickouRovnici(double koeficient[])
+Result ResOfQuadraticEquation(double coefficient[])
 {
-    double a = koeficient[a1];
-    double b = koeficient[b1];
-    double c = koeficient[c1];
+    double a = coefficient[a1];
+    double b = coefficient[b1];
+    double c = coefficient[c1];
+    bool pDiscriminat = true; // possitve discriminant
     
-    double d = b*b - 4*a*c;
-    Vysledek vysledek;
-    double pCitatel = -b + d;
-    double nCitatel = -b - d;
-    double jmenovatel = 2 * a;
-    if (d >= 0){
-        d = sqrt(d);
-        vysledek.druh=Druh::Realne;
-        vysledek.vysledek[x1] = pCitatel / jmenovatel;
-        vysledek.vysledek[x2] = nCitatel / jmenovatel;
+    double d = b*b - 4*a*c; // discriminant
+    (d >= 0 ? pDiscriminat = true : pDiscriminat = false);
+    Result result;
+    d = sqrt(abs(d));
+    double pNumerator = -b + d; // positive numberator
+    double nNumerator = -b - d; // negative numerator
+    double denominator = 2 * a; 
+    if (pDiscriminat){
+        result.myType=Type::Real;
+        result.result[x1] = pNumerator / denominator;
+        result.result[x2] = nNumerator / denominator;
     }else{
-        d = sqrt(-d);
-        vysledek.druh=Druh::Komplexni;
-        vysledek.vysledek[x1] = pCitatel / jmenovatel;
-        vysledek.vysledek[x2] = nCitatel / jmenovatel;
+        result.myType=Type::Complex;
+        result.result[x1] = pNumerator / denominator;
+        result.result[x2] = nNumerator / denominator;
     }
     
-    return vysledek;
+    return result;
 }
 
 int main()
 {
-    double rovnice[]{1,1,1};
-    Vysledek vysledek = ResKvadratickouRovnici(rovnice);
-    if (vysledek.druh == Druh::Realne){
-        cout << "x1: " << vysledek.vysledek[x1] << " x2: " << vysledek.vysledek[x2] << endl;
+    double equation[]{1,1,1};
+    cout << "Enter coefficients of quadratic equation in form 'a' 'b' 'c' : ";
+    cin >> equation[a1] >> equation[b1] >> equation[c1];
+    Result result = ResOfQuadraticEquation(equation);
+    if (result.myType == Type::Real){
+        cout << "x1: " << result.result[x1] << " x2: " << result.result[x2] << endl;
     }else{
-        cout << "x1: " << vysledek.vysledek[x1] << "i x2: "<< vysledek.vysledek[x2] << "i" << endl;
+        cout << "x1: " << result.result[x1] << "i x2: "<< result.result[x2] << "i" << endl;
     }
     return 0;
 }

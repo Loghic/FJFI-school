@@ -1,28 +1,31 @@
 #include <iostream>
 using namespace std;
 
-using T = double;
-const int HORNI_MEZ_PRO_FAKTORIAL = 12;
+enum {ERROR = 100};
 
-T faktorial(T n)
+using T = double;
+const int CELLING_FOR_FACTORIAL = 12;
+
+T factorial(T number)
 {
-    T vysledek = 1;
-    while (n > 1)
+    T result = 1;
+    while (number > 1)
     {
-        vysledek *= n--;
+        result *= number--;
     }
-    return vysledek;
+    return result;
 }
 
 int main()
 {
-    cout << "Zadej cislo : ";
-    int n;
-    cin >> n;
-    if ((n >= 0) && (n <= HORNI_MEZ_PRO_FAKTORIAL)){
-        cout << "Jeho faktorial je: " << faktorial(n) << endl;
+    cout << "Enter integer: ";
+    int number;
+    cin >> number;
+    if ((number >= 0) && (number <= CELLING_FOR_FACTORIAL)){
+        cout << "The faktorial is: " << factorial(number) << endl;
     }else{
-        cout << "Cislo je mimo dovoleny rozsah" << endl;
+        cout << "The number is out of range!" << endl;
+        return ERROR;
     }
 
     return 0;

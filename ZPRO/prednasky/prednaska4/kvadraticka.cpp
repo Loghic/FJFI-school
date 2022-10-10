@@ -5,12 +5,12 @@ using namespace std;
 
 enum DruhReseni { Realne, Komplexni };
 
-enum {a, b, c};// indexi
-enum {x1, x2}; //indexi
+enum {a, b, c};// indexes
+enum {x1, x2}; //indexes
 
 DruhReseni ResKvadratickouRovnici(double const koef[], double vysledek[])
 {
-    double d = koef[b] * koef[b] - 4 * koef[a] * koef[c]; // d je diskriminant
+    double d = koef[b] * koef[b] - 4 * koef[a] * koef[c]; // d is discriminant
     if (d >= 0){
         d = sqrt(d);
         vysledek[x1] = (-koef[b] + d)/(2 * koef[a]);
@@ -29,7 +29,7 @@ DruhReseni ResKvadratickouRovnici(double const koef[], double vysledek[])
 
 int main()
 {
-    double A[] = {1,1,1};
+    double A[] = {1,1,-2};
     double vysledek[2] {};
     int druh = ResKvadratickouRovnici(A, vysledek);
     if (druh == Realne){

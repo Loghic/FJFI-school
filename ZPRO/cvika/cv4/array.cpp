@@ -14,7 +14,7 @@ struct Array
 
 void print(Array);
 Array maxAndMinElement(const double[], const int);
-Array AddtionAndMulOfElements(const double[], const int);
+Array AddtionAndMulOfElements(const double[], const int, Array);
 
 
 int main()
@@ -22,7 +22,7 @@ int main()
     double x[] = {-1.1,2.2,46, 33, -2,3};
     int lenght = sizeof(x)/sizeof(x[0]);
     Array myVector = maxAndMinElement(x,lenght);
-    myVector = AddtionAndMulOfElements(x,lenght);
+    myVector = AddtionAndMulOfElements(x,lenght, myVector);
     print(myVector);
     return 0;
 }
@@ -54,9 +54,8 @@ Array maxAndMinElement(const double  x[], const int lenght)
     return result;
 }
 
-Array AddtionAndMulOfElements(const double x[], const int lenght)
+Array AddtionAndMulOfElements(const double x[], const int lenght, Array result)
 {
-    Array result;
     result.addtionOfElements = 0;
     result.multiplicationOfElements = 1;
     for (size_t i {0}; i < lenght; i++){

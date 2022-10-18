@@ -27,7 +27,7 @@ bool Even(int number)
     }return false;
 }
 
-bool prime(int number)
+bool prime(int number) // prime with return
 {
     if (number < 2){
         return false;
@@ -57,7 +57,7 @@ void printPrime(bool isPrime, int number)
     }
 }
 
-bool primeWithBreak(int number)
+bool primeWithBreak(int number) // for cycle with break
 {
     bool isPrime = true;
     if (number < 2){

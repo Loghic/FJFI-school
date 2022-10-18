@@ -14,11 +14,11 @@ int main()
 
 void days()
 {
-    int number;
-    cout << "Enter a number: ";
-    cin >> number;
+    int day;
+    cout << "Enter a number: "; // each number is assigned to some day
+    cin >> day;
 
-    switch (number){
+    switch (day){
         case 1: 
             cout << "Monday" << endl;
             break;
@@ -46,7 +46,7 @@ void days()
     }   
 }
 
-void letter()
+void letter() // Tells you what type of character you have typed, if its known type
 {
     char c;
     cout << "Enter a character: ";

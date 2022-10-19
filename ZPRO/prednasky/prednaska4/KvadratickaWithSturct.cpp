@@ -25,8 +25,8 @@ Vysledek ResKvadratickouRovnici(double koef[])
     }else{
         d = sqrt(-d);
         vysledek.druh=Druh::Komplexni;
-        vysledek.vysledek[x1] = (-koef[b] + d)/ 2 / koef [a];
-        vysledek.vysledek[x2] = (-koef[b] - d)/ 2 / koef [a];
+        vysledek.vysledek[x1] = -koef[b]/ 2 * koef [a];
+        vysledek.vysledek[x2] = d / 2 * koef [a];
     }
     return vysledek;
 }
@@ -38,7 +38,7 @@ int main()
     if (vysledek.druh == Druh::Realne){
         cout << "x1: " << vysledek.vysledek[x1] << " x2: " << vysledek.vysledek[x2] << endl;
     }else{
-        cout << "x1: " << vysledek.vysledek[x1] << "i x2: "<< vysledek.vysledek[x2] << "i" << endl;
+        cout << "x1: " << vysledek.vysledek[x1] << " x2: +-"<< vysledek.vysledek[x2] << "i" << endl;
     }
     return 0;
 }

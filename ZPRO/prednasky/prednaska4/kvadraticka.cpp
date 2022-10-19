@@ -18,8 +18,8 @@ DruhReseni ResKvadratickouRovnici(double const koef[], double vysledek[])
         return Realne;
     }else{
         d = sqrt(-d);
-        vysledek[x1] = (-koef[b] + d)/(2 * koef[a]);
-        vysledek[x2] = (-koef[b] - d)/(2 * koef[a]);
+        vysledek[x1] = -koef[b]/ 2 * koef [a];
+        vysledek[x2] = d / 2 * koef [a];
         return Komplexni;
     }
 
@@ -29,13 +29,13 @@ DruhReseni ResKvadratickouRovnici(double const koef[], double vysledek[])
 
 int main()
 {
-    double A[] = {1,1,-2};
+    double A[] = {1,1,1};
     double vysledek[2] {};
     int druh = ResKvadratickouRovnici(A, vysledek);
     if (druh == Realne){
         cout << "x1: " << vysledek[x1] << " x2: " << vysledek[x2] << endl;
     }else{
-        cout << "x1: " << vysledek[x1] << "i x2: " << vysledek[x2] << "i" << endl;
+        cout << "x1: " << vysledek[x1] << " x2: +-" << vysledek[x2] << "i" << endl;
     }
     return 0;
 }

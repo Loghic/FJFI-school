@@ -33,8 +33,8 @@ Result ResOfQuadraticEquation(double coefficient[])
         result.result[x2] = nNumerator / denominator;
     }else{
         result.myType=Type::Complex;
-        result.result[x1] = pNumerator / denominator;
-        result.result[x2] = nNumerator / denominator;
+        result.result[x1] = -b / denominator;
+        result.result[x2] = d / denominator;
     }
     
     return result;
@@ -49,7 +49,7 @@ int main()
     if (result.myType == Type::Real){
         cout << "x1: " << result.result[x1] << " x2: " << result.result[x2] << endl;
     }else{
-        cout << "x1: " << result.result[x1] << "i x2: "<< result.result[x2] << "i" << endl;
+        cout << "x1: " << result.result[x1] << " x2: +-"<< result.result[x2] << "i" << endl;
     }
     return 0;
 }

@@ -29,7 +29,11 @@ int main()
     my_print(l1);
     p = find_the_lowest(l1);
     cout << p->data << endl;
+    sort(l1);
+    my_print(l1);
+
     
+    delete_list(l1);
 
     return 0;
 }

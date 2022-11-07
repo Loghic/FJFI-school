@@ -26,6 +26,7 @@ void push_back(list& l, T what)
 void push_behind(list& l, T what, element* whichOne)
 {
     whichOne->next = new element{what, whichOne->next};
+    l.length++;
     // whichOne->next = myNew;
 }
 
@@ -87,6 +88,7 @@ void delete_behind(list& l, element* which)
     auto tmp = which->next;
     which->next = tmp->next;
     delete tmp;
+    l.length--;
 }
 
 void my_delete(list& l, element* which)
@@ -95,6 +97,7 @@ void my_delete(list& l, element* which)
         l.sentinel = which;
         delete which->next;
         which->next = nullptr;
+        l.length--;
     }else{
         which->data = which->next->data;
         delete_behind(l, which);
@@ -112,4 +115,19 @@ element* find_the_lowest(list& l)
         tmp = tmp->next;
     }
     return lowest;
+}
+
+void sort(list& l)
+{
+    list tmp;
+    make(tmp);
+    while (!is_Empty(l)){
+        element* lowest = find_the_lowest(l);
+        push_back(tmp, lowest->data);
+        my_delete(l, lowest);
+    }
+    swap(l.head, tmp.head);
+    swap(l.sentinel, tmp.sentinel);
+    swap(l.length, tmp.length);
+    delete_list(tmp);
 }

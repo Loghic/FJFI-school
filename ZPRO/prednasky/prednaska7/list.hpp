@@ -2,10 +2,12 @@
 #define __LIST_HPP__
 
 #include <iostream>
-using T = int;
+#include <string>
+using namespace std;
+using T = int; // str
 // typedef int T; same declaration as example above
 
-const T myNULL = 0;
+const T myNULL = 0; // ""
 
 struct element
 {
@@ -34,7 +36,8 @@ size_t len_list(list& l);
 element* find(T what);
 void my_print(list& l);
 element* find_the_lowest(list& l);
-element* find_the_(list& l);
+element* find_the_biggest(list& l);
+void sort(list& l);
 
 
 #endif // !__LIST_HPP__

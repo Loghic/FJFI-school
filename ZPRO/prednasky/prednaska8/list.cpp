@@ -61,26 +61,30 @@ void delete_list(list& l)
     delete l.head;
 }
 
-element* find(list& l, T what)
+my_iterator find(list& l, T what)
 {
     l.sentinel->data = what;
     element* tmp = l.head;
     while(tmp->data != what){
         tmp = tmp->next;
     }
-
-    if (tmp == l.sentinel){
-        return nullptr;
-    }else{
-        return tmp;
-    }
+    return my_iterator{tmp, &l};
+    // if (tmp == l.sentinel){
+    //     return my_iterator{tmp, &l};
+    // }else{
+    //     return ;
+    // }
 }
 
 void my_print(list& l)
 {
-    for (element* tmp = l.head; tmp != l.sentinel; tmp = tmp->next){
-        cout << tmp->data << ", ";
-    }cout << endl;
+    // for (element* tmp = l.head; tmp != l.sentinel; tmp = tmp->next){
+    //     cout << tmp->data << ", ";
+    // }cout << endl;
+    for(my_iterator i = begin(&l); !is_equal(i,end(&l)); go_to_next(i)){
+        cout << return_value(i) << ", ";
+    }
+    cout << endl;
 }
 
 void delete_behind(list& l, element* which)
@@ -131,5 +135,44 @@ void sort(list& l)
     swap(l.sentinel, tmp.sentinel);
     swap(l.length, tmp.length);
     delete_list(tmp);
+}
+
+my_iterator make_iterator(list *l, element *Element)
+{
+    return my_iterator{Element, l};
+}
+
+bool go_to_next(my_iterator &i)
+{
+    if (i.acctual == i.l->sentinel){
+        return false;
+    }
+    i.acctual = i.acctual->next;
+    return true;
+}
+
+my_iterator begin(list *l)
+{
+    return my_iterator{l->head, l};
+}
+
+my_iterator end(list *l)
+{
+    return my_iterator{l->sentinel, l};
+}
+
+T return_value(my_iterator i)
+{
+    return i.acctual->data;
+}
+
+void set_value(my_iterator i, T value)
+{
+    i.acctual->data = value;
+}
+
+bool is_equal(my_iterator i1, my_iterator i2)
+{
+    return i1.acctual == i2.acctual;
 }
 

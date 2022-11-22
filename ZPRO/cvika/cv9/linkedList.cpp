@@ -94,7 +94,7 @@ element* find(List *l, Data d)
 void removeAfter(List *l, element *where)
 {
     element *tmp = where->next;
-    if (tmp = l->sentinel){
+    if (tmp == l->sentinel){
         l->sentinel = where;
         where->next = tmp->next;
     }else{

@@ -17,6 +17,7 @@ int main()
     pushFront(l, 2);
     pushBack(l,30);
     pushBack(l,5);
+    pushBack(l,20);
     print(l);
     return 0;
 }

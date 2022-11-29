@@ -1,5 +1,6 @@
 TARGET = main
 OBJS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+OBJSC = $(patsubst %.o,%.cpp,$(wildcard *.cpp))
 CFLAGS +=-std=c++17 -pedantic -Wall
 CFLAGS += -O2
 
@@ -12,7 +13,7 @@ bin: $(TARGET)
 
 $(OBJS):  %.o: %.cpp
 	@clear
-	@echo "Building..."
+	@echo "Building..."	 
 	@$(CXX) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(TARGET): $(OBJS) 

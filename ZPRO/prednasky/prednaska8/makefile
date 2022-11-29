@@ -2,15 +2,15 @@ TARGET = main
 OBJS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 CFLAGS +=-std=c++17 -pedantic -Wall
 CFLAGS += -O2
-CC = g++
+
 
 bin: $(TARGET)
 
 $(OBJS):  %.o: %.cpp
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(TARGET): $(OBJS) 
-	$(CC) $(OBJS) $(LDFLAGS) -o $@
+	$(CXX) $(OBJS) $(LDFLAGS) -o $@
 
 	rm -rf $(OBJS)
 

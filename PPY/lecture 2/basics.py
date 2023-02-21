@@ -146,3 +146,20 @@ for newPos in range(myCnt - myCntPrev):
 
 print("")
 
+print("-"*40)
+
+myStr = "Hello World"
+
+for word in myStr.split(' '):
+    word[0].lower()
+    for pos in range(len(word)):
+        printingPos = len(word)-1 - pos
+        if 97 <= ord(word[-1]) <= 122:
+            shift = ord(word[-1]) - 32 
+            uppercase = chr(shift)
+            word = word[:-1] + uppercase
+        print(word[printingPos], end='')
+    
+    print(" ", end='')
+
+print("")

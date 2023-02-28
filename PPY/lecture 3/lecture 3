@@ -1,0 +1,145 @@
+if None == None:
+    print ("None is equal to None")
+else:
+    print ("None is not equal to None")
+
+if None is None:
+    print("None is None")
+else:
+    print("None is not None")
+
+print("-"*40)
+print("Arrays: ")
+numbers = [1,2,3,4,5]
+print("Numbers: ",numbers)
+
+first_number = numbers[0]
+print("first number: ", first_number)
+
+numbers[1] = 10
+print("Modified numbers: ", numbers)
+
+numbers.append(6)
+print("Numbers appended: ", numbers)
+
+numbers.remove(4)
+print("Removed element: ", numbers)
+
+print("Array iteration: ")
+for num in numbers:
+    print(num)
+
+my_num = numbers.pop()
+print("Popped number: ", my_num, " rest of list: ", numbers)
+
+numbers.sort()
+print("Sorted: ", numbers)
+
+numbers.reverse()
+print("Reverse: ", numbers)
+
+print("-"*40)
+print("Tuples: ")
+numbers2 = (1,2,3,4,5)
+print("Numbers2: ", numbers2)
+numbers2_list = [1,2,3,4,5]
+print("Numbers2 list: ", numbers2_list)
+print("Type of numbers2 list: ", type(numbers2_list))
+print("Type of numbers2: ", type(numbers2))
+
+print(numbers2[1])
+# numbers2[1] = 10
+
+print("-"*40)
+print("sets: ")
+numbers_set = {1,2,3,4,5}
+print("Numbers set: ", numbers_set)
+numbers_set2 = set([1,2,3,4,5])
+print("Numbers set2: ", numbers_set2)
+numbers_set = {1,2,3,4,5,5}
+print("Numbers set: ", numbers_set)
+
+numbers_set.add(6)
+print("Numbers set adding: ", numbers_set)
+
+numbers_set.remove(4)
+print("Remove from numbers set: " ,numbers_set)
+
+print("set operation: ")
+print("Numbers set: ", numbers_set)
+print("Numbers set union: ", numbers_set.union(set([3,100])))
+print("Numbers set intersection", numbers_set.intersection(set([3, 100])))
+print("Numbers set difference: ", numbers_set.difference([3,100]))
+
+print("Iterating over set: ")
+for num in numbers_set:
+    print(num)
+
+print("-"*40)
+print("Dictionaries: ")
+ages = {"Alice": 25, "Bob": 30, "Charlie": 35}
+print("Ages: ", ages)
+
+alice_age = ages["Alice"]
+print("Alice age: ", alice_age)
+
+ages["Bob"] = 32
+print("Modifying age value: ", ages)
+
+ages["David"] = 28
+print("Adding key-value pairs: ", ages)
+
+del ages["Charlie"]
+print("Deleting key-value pairs: ", ages)
+
+print("Iterating over a dictionary: ")
+for name, age in ages.items():
+    print(name + " is " + str(age) + " years old")
+
+print("-"*40)
+print("Iterators: ")
+
+numbers = [1,2,3,4,5]
+iter_numbers = iter(numbers)
+
+print("Itering from this array: ", numbers)
+print("Next iter_numbers: ", next(iter_numbers))
+print("Next iter_numbers", next(iter_numbers))
+print("Next iter_numbers", next(iter_numbers))
+
+
+print("generator: ")
+def count_up_to(n):
+    i = 1
+    while i <= n:
+        yield i
+        i += 1
+
+for num in count_up_to(5):
+    print(num)
+
+print("-"*40)
+print("Comprehensions: ")
+
+squares = [x**2 for x in range (1,6)]
+print("Squares of numbers 1-5: ", squares)
+
+squares_even = [x**2 for x in range(1,6) if x % 2 == 0]
+print("Even squares of numbers 1-5: " , squares_even)
+
+words = ["Apple", "Banana", "Sea"]
+word_lenghts = {x:len(x) for x in words}
+print("Words and their lengths: ", word_lenghts)
+
+numbers = [1,2,3,4,5,6]
+events = {x for x in numbers if x % 2 == 0}
+print("Even numbers from: ", numbers, " are: ", events)
+cubes = (x**3 for x in range(1,6))
+print("Cubes from numbers 1-5: ")
+for cube in cubes:
+    print(cube)
+
+print("-"*40)
+print("Homework from last time: ")
+print("Reverse Hello World and make the first letters capital: \n")
+print([token[::-1].capitalize() for token in 'Hello World'.split(' ')],"\n")

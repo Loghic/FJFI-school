@@ -22,10 +22,11 @@ class myItem
         myItem* prev;
         //myItem () : name(""), red(0), blue(0), green(0),next(nullptr), prev(nullptr){}
         myItem( string name0="", int r0=0, int g0=0, int b0=0) 
-        : link (nullptr), name(name0), red(r0), blue(b0), green(g0),next(nullptr), prev(nullptr){ name = name; } 
+        : link (nullptr), name(name0), red(r0), blue(b0), green(g0),next(nullptr), prev(nullptr){ name = name0; } 
 
         void insertBefore(myItem* fresh);
         void insertAfter(myItem* fresh);
+        void remove();
 };
 
 class myList
@@ -42,8 +43,10 @@ class myList
         void insertLast(myItem* fresh);
         void print();
 
+        myItem* find (string name0);
+
         myList () { }
-        ~ myList ();
+        ~ myList (); 
 
         friend class myItem;
 
@@ -55,9 +58,12 @@ myList::~myList()
     while (tmp)
     {
         myItem* t = tmp->next;
+        // t->remove();
         delete tmp;
         tmp = t;
     }
+    first = nullptr;
+    last = nullptr; 
 }
 
 void myList::insert (myItem* before, myItem* fresh, myItem* after)
@@ -121,6 +127,39 @@ void myItem::insertBefore(myItem *fresh)
     link->insert(prev, fresh, this);
 }
 
+myItem* myList::find (string name0)
+{
+    for (myItem *tmp = first; tmp ; tmp = tmp->next){
+        if (tmp->name == name0){
+            return tmp;
+        }
+    }
+    return nullptr;
+}
+
+void myItem::remove()
+{
+    if (link){ //link != nullptr
+
+        // myItem *before = prev;
+        // myItem *after = next;
+
+        if (prev){
+            prev->next = next;
+        }else{
+            link->first = next;
+        }
+        if (next){
+            next->prev = prev;
+        }else{
+            link->last = prev;
+        }
+
+        next = nullptr;
+        prev = nullptr;
+        link = nullptr;
+    }
+}
 
 
 int main()
@@ -140,6 +179,32 @@ int main()
     s.insertLast(new myItem ("green", 0,0,255) );
     s.insertLast(new myItem ("rainbow", 255,255,255) );
     s.print();
+    cout << "---------------------------------" << endl;
+    myItem* a = s.find("green");
+
+
+    if (a){
+        cout << a->red << endl;
+        a->remove();
+        s.insertFirst(a);
+        
+    }else{
+        cout << "Doens't exist" << endl;
+    }
+    cout << "---------------------------------" << endl;
+    s.print();
+    cout << "---------------------------------" << endl;
+
+    myList b;
+    while (s.first){
+        myItem *t = s.first;
+        t->remove();
+        b.insertFirst(t);
+    }
+    cout << "Printing list s: " << endl;
+    s.print();
+    cout << "---------------------------------" << endl;
+    b.print();
     cout << "---------------------------------" << endl;
     return OK;
 }

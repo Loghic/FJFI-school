@@ -8,13 +8,13 @@ CFLAGS += -O2
 bin: $(TARGET)
 	@echo "Build was finished succesfully!"
 	@echo "Running file $(TARGET):"
-	@echo "\e[0m"
-	@echo "\e[1;35m"
+	@echo "\033[0m"
+	@echo "\033[1;35m"
 	@./$(TARGET)
 
 $(OBJS):  %.o: %.cpp
 	@clear
-	@echo "\e[1;34m"
+	@echo "\033[1;34m"
 	@echo "Building..."	 
 	@$(CXX) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
@@ -28,4 +28,4 @@ $(TARGET): $(OBJS)
 clean:
 	@clear
 	@rm -rf $(OBJS) $(TARGET)
-	@echo "\e[1;33mBuild was cleaned!"
+	@echo "\033[1;33mBuild was cleaned!"

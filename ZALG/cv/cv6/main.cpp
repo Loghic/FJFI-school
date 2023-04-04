@@ -27,7 +27,7 @@ int main()
 
     for (int k = 2; k <= N -1; k++){
         a[2][k] = -2; // forbidden square
-        a[7][k] == 2;
+        a[7][k] = 2;
     }
 
 

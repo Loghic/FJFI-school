@@ -5,7 +5,7 @@ using namespace std;
 
 enum{OK};
 
-const int N = 10;
+const int N = 5;
 
 struct Tower
 {
@@ -19,11 +19,37 @@ void init(Tower & X)
     for (int i = 0; i < N; i++)X.a[i] = 0;
 }
 
+void print();
+
+void step(Tower &X, Tower &Y);
+
 void setup(Tower & X)
 {
     X.h = N;
     for (int i = 0; i < N; i++)X.a[i] = N-i;
 }
+
+void play(Tower &X, Tower &Y, Tower &Z, int k)
+{
+    if(k > 1){
+        play(X,Z,Y, k-1);
+    }
+    step(X, Z);
+    print();
+    if (k > 1) {
+        play (Y, X, Z, k-1);
+    }
+}
+
+// void play(Tower &X, Tower &Y, Tower &Z, int k) shorter version of play
+// {
+//     if(k > 1){ play(X,Z,Y, k-1);}
+//     step(X, Z);
+//     print();
+//     if (k > 1) { play (Y, X, Z, k-1); }
+// }
+
+
 
 void step(Tower &X, Tower &Y)
 {
@@ -69,11 +95,17 @@ int main()
     setup(A);
     init(B);
     init(C);
+
     print();
-    step(A, B);
-    step(A,C);
-    print();
-    step(A,C);
-    print();
+
+    play(A,B,C, N);
+
+
+    // step(A, B);
+    // step(A,C);
+    // print();
+    // step(A,C);
+    // print();
+
     return OK;
 }

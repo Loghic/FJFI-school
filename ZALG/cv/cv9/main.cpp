@@ -2,6 +2,8 @@
 
 using namespace std;
 
+enum {OK};
+
 void quicksort(int r, int s)
 {
     int h = a[(r+s) / 2];
@@ -12,7 +14,7 @@ void quicksort(int r, int s)
         while (a[i] < h) i++;
         while (a[k] > h) k--;
         if (i <= k){
-            swap(a[i], a[k]):
+            swap(a[i], a[k]);
             i++;
             k--;
         }
@@ -20,4 +22,11 @@ void quicksort(int r, int s)
 
     if (r < k) quicksort(r,k);
     if (i < s) quicksort(i, s);
+}
+
+int main()
+{
+    init();
+
+    return OK;
 }

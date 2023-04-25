@@ -216,8 +216,6 @@ Item* root = nullptr;
 
 int main()
 {
-
-// file:///Users/loghi/Documents/school/FJFI-school/ZALG/cv/cv10/output.html
     // insert(root, 7);
     // insert(root, 10);
     // insert(root, 4);

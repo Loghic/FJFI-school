@@ -12,7 +12,7 @@ using namespace std;
 struct Item
 {
     int key = 0;
-    // int height = 1;
+    int height = 1;
     Item* left = nullptr;
     Item* right = nullptr;
 };
@@ -29,6 +29,26 @@ Item* find(Item* top, int value)
     }
     // p == nullptr || p->key == value;
     return p;
+}
+
+inline int h(Item* p)
+{
+    if (p == nullptr){
+        return 0;
+    }else{
+        return p->height;
+    }
+}
+
+void update (Item* p)
+{
+    int L = h(p->left);
+    int R = h(p->right);
+    if (L > R){
+        p->height = L + 1;
+    }else{
+        p->height = R + 1;
+    }
 }
 
 void insert (Item * & p, int value)
@@ -53,6 +73,59 @@ void insert (Item * & p, int value)
     {
         insert(p->right, value);
     }
+
+    
+    Item * a = p;
+    int L = h(a->left);
+    int R = h(a->right);
+    if (L > R + 1) {
+        Item* b = a->left;
+        if (h(b->left) > h(b->right)) {
+            Item* c = b->left;
+            Item* t = b->right;
+            p = b;
+            b->right = a;
+            a->left = t;
+            update(a);
+        }
+        else {
+            Item* c = b->right;
+            Item* s = c->left;
+            Item* t = c->right;
+            p = c;
+            c->left = b;
+            c->right = a;
+            b->right = s;
+            a->left = t;
+            update(a);
+            update(b);
+        }
+    }
+    else if (L + 1 < R) {
+        Item* b = a->right;
+        if (h(b->right) > h(b->left)) {
+            Item* c = b->right;
+            Item* t = b->left;
+            p = b;
+            b->left = a;
+            a->right = t;
+            update(a);
+        }
+        else {
+            Item* c = b->left;
+            Item* s = c->right;
+            Item* t = c->left;
+            p = c;
+            c->right = b;
+            c->left = a;
+            b->left = s;
+            a->right = t;
+            update(a);
+            update(b);
+        }
+    }
+    update (p);
+
 }
 
 /* ---------------------------------------------------------------------- */
@@ -143,11 +216,19 @@ Item* root = nullptr;
 
 int main()
 {
+
+// file:///Users/loghi/Documents/school/FJFI-school/ZALG/cv/cv10/output.html
+    // insert(root, 7);
+    // insert(root, 10);
+    // insert(root, 4);
+    // insert(root, 3);
+    // insert(root, 2);
+    // insert(root, 1);
+    insert(root, 5);
+    insert(root, 6);
     insert(root, 7);
-    insert(root, 10);
-    insert(root, 4);
-    insert(root, 2);
-    insert(root, 1);
+    insert(root, 9);
+    insert(root, 8);
     writeHtml("output.html", root);
 
     cout << "O.K." << endl;

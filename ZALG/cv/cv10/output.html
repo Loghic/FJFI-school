@@ -14,15 +14,15 @@
         var parent = graph.getDefaultParent();
         graph.getModel().beginUpdate();
     
-        var v7 = graph.insertVertex (parent, null, '7', 400, 0, 80, 30);
-        var v4 = graph.insertVertex (parent, null, '4', 200, 80, 80, 30);
-        var v2 = graph.insertVertex (parent, null, '2', 100, 160, 80, 30);
-        var v1 = graph.insertVertex (parent, null, '1', 50, 240, 80, 30);
-        graph.insertEdge (parent, null, '', v2, v1);
-        graph.insertEdge (parent, null, '', v4, v2);
-        graph.insertEdge (parent, null, '', v7, v4);
-        var v10 = graph.insertVertex (parent, null, '10', 600, 80, 80, 30);
-        graph.insertEdge (parent, null, '', v7, v10);
+        var v6 = graph.insertVertex (parent, null, '6', 400, 0, 80, 30);
+        var v5 = graph.insertVertex (parent, null, '5', 200, 80, 80, 30);
+        graph.insertEdge (parent, null, '', v6, v5);
+        var v8 = graph.insertVertex (parent, null, '8', 600, 80, 80, 30);
+        var v7 = graph.insertVertex (parent, null, '7', 500, 160, 80, 30);
+        graph.insertEdge (parent, null, '', v8, v7);
+        var v9 = graph.insertVertex (parent, null, '9', 700, 160, 80, 30);
+        graph.insertEdge (parent, null, '', v8, v9);
+        graph.insertEdge (parent, null, '', v6, v8);
 
         graph.getModel().endUpdate();
     };

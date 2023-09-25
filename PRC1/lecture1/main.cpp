@@ -15,7 +15,7 @@ int main()
     while (getline(cin, line)){
         read.push_back(line);
     }
-
+                            
 
     sort(read.begin(), read.end());
 

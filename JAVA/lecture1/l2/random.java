@@ -4,9 +4,9 @@ package l2;
 import java.util.Scanner;
 
 
-public class main
+public class random
 {
-    public static void main (String[] args)
+    public static void main(String[] args)
     {
         Scanner vstup = new Scanner(System.in);
         System.out.print("Zadej prosim cele cislo: ");

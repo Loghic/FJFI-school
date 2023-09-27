@@ -1,4 +1,4 @@
-package l1;
+package l2_1;
 
 
 /** Jedina trida v nasem programu,

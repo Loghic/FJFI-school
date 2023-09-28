@@ -4,3 +4,7 @@ testPurpuse/
 UOA/
 ZPRO/HW/
 .idea
+CMakeLists.txt
+.ninja*
+build.ninja
+cmake*

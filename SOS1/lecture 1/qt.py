@@ -1,4 +1,7 @@
-from PyQt5.QtWidgets import *
+import sys
+import os
+
+from PySide6.QtWidgets import *
 
 # app = QApplication ([""])
 # win = QPushButton ()

@@ -1,5 +1,5 @@
 # Software seminar 1
-Java + Javabeans and others
+PythonQt
 
 Recommended literature:
     O'reilly - Learning python 

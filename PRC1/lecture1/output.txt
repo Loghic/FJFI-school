@@ -1,4 +1,0 @@
-20 pes oknem
-30 nebude-li prset
-40 nezmoknem
-9 kocka leze dirou

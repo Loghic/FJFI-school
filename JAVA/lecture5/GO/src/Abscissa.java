@@ -23,6 +23,18 @@ public class Abscissa extends GraphicalObject
         setEnd(end);
     }
 
+    public Abscissa(Abscissa abscissa)
+    {
+        super(abscissa.getColor());
+        Point begin = new Point(abscissa.getColor(), abscissa.getBegin().getX(), abscissa.getBegin().getY());
+        // takhle vytvorime kopie toho bodu
+        Point end = new Point(abscissa.getColor(), abscissa.getEnd().getX(), abscissa.getEnd().getY());
+        setBegin(begin);
+        setEnd(end);
+        //lokalni kopie bodu, ze kterych pak vyrobime prusecku, normalne by se mel delat u kazde veci kopirovaci konstruktor
+    }
+
+
     public String toString()
     {
         return super.toString() + "<" + begin + "; " + end + ">";

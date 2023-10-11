@@ -23,6 +23,7 @@ public class Abscissa extends GraphicalObject
         setEnd(end);
     }
 
+    // kopirovaci konstruktor
     public Abscissa(Abscissa abscissa)
     {
         super(abscissa.getColor());
@@ -38,6 +39,11 @@ public class Abscissa extends GraphicalObject
     public String toString()
     {
         return super.toString() + "<" + begin + "; " + end + ">";
+    }
+
+    @Override
+    public GraphicalObject kopie() {
+        return null;
     }
 
     @Override

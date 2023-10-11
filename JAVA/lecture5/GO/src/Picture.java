@@ -9,9 +9,14 @@ public class Picture extends GraphicalObject
         super(0);
     }
 
+    @Override
+    public GraphicalObject kopie() {
+        return null;
+    }
+
     public void add(GraphicalObject graphicalObject)
     {
-        picture.add(graphicalObject); //pridava na konec
+        picture.add(graphicalObject.kopie()); //pridava na konec
     }
 
     @Override

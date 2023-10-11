@@ -8,7 +8,7 @@ public class Main
 //        go.draw();
 
         Picture picture = new Picture();
-        picture.add(new GraphicalObject(5));
+//        picture.add(new GraphicalObject(5));
         picture.add(new Abscissa(8,
                     new Point(5,1,3), new Point(8,9,10)));
         //picture.draw();

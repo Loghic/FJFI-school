@@ -6,6 +6,13 @@ public class Point extends GraphicalObject
         setY(y);
     }
 
+    public Point(Point point)
+    {
+        super(point.getColor());
+        setX(point.getX());
+        setY(point.getY());
+    }
+
     public final int getX()
     {
         return x;
@@ -24,6 +31,11 @@ public class Point extends GraphicalObject
     public final void setY(int y)
     {
         this.y = y;
+    }
+
+    public Point kopie()
+    {
+        return new Point(this);
     }
 
     @Override

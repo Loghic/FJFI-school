@@ -1,9 +1,14 @@
-public class GraphicalObject
+public abstract class GraphicalObject
 {
 
     public GraphicalObject(int color)
     {
         setColor(color);
+    }
+
+    public GraphicalObject(GraphicalObject go)
+    {
+        setColor(go.getColor());
     }
 
     public GraphicalObject()
@@ -24,6 +29,8 @@ public class GraphicalObject
     {
         return "[" + getColor() + "]";
     }
+
+    public abstract GraphicalObject kopie();
 
     public void draw()
     {

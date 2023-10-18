@@ -4,10 +4,19 @@ namespace Paint2
 {
     public partial class Form1 : Form
     {
+
+        const int lineInx = 0;
+        const int rectangleInx = 1;
+        const int ellipseInx = 2;
+
+        Pen pen = new Pen (Color.FromArgb(255, 0, 0), 3);
+        Brush brush = new SolidBrush (Color.Yellow);
+
         public Form1()
         {
             InitializeComponent();
             pictureBox_SizeChanged(null, null);
+            comboBox.SelectedIndex = lineInx;
         }
 
         private void pictureBox_SizeChanged(object sender, EventArgs e)
@@ -88,11 +97,30 @@ namespace Paint2
         {
             if (click)
             {
+                int tool = comboBox.SelectedIndex;
+
                 Graphics g = Graphics.FromImage(pictureBox.Image);
                 g.DrawImage(save, 0, 0);
-                Pen p = new Pen(Color.FromArgb(255, 0, 0));
-                p.Width = 3;
-                g.DrawLine(p, X0, Y0, e.X, e.Y);
+                switch (tool)
+                {
+                    case lineInx:
+                        g.DrawLine (pen, X0, Y0, e.X, e.Y);
+                        break;
+                    case rectangleInx:
+                        int X1 = X0;
+                        int Y1 = Y0;
+                        int X2 = e.X;
+                        int Y2 = e.Y;
+                        if (X1 > X2) { int t = X1; X1 = X2; X2 = t; }
+                        if (Y1 > Y2) { int t = Y1; Y1 = Y2; Y2 = t; }
+                        g.FillRectangle (brush, X1, Y1, X2 - X1, Y2 - Y1);
+                        g.DrawRectangle (pen, X1, Y1, X2 - X1, Y2 - Y1);
+                        break;
+                    case ellipseInx:
+                        g.FillEllipse (brush, X0, Y0, e.X - X0, e.Y - Y0);
+                        g.DrawEllipse (pen, X0, Y0, e.X - X0, e.Y - Y0);
+                        break;
+                }
                 pictureBox.Invalidate();
             }
         }

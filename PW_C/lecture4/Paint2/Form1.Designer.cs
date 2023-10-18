@@ -29,7 +29,9 @@
         private void InitializeComponent()
         {
             toolPanel = new Panel();
+            comboBox = new ComboBox();
             pictureBox = new PictureBox();
+            toolPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
             SuspendLayout();
             // 
@@ -37,11 +39,23 @@
             // 
             toolPanel.BackColor = Color.FromArgb(255, 255, 192);
             toolPanel.BorderStyle = BorderStyle.Fixed3D;
+            toolPanel.Controls.Add(comboBox);
             toolPanel.Dock = DockStyle.Top;
             toolPanel.Location = new Point(0, 0);
             toolPanel.Name = "toolPanel";
             toolPanel.Size = new Size(800, 58);
             toolPanel.TabIndex = 0;
+            // 
+            // comboBox
+            // 
+            comboBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox.FormattingEnabled = true;
+            comboBox.Items.AddRange(new object[] { "line", "rectangle", "ellipse" });
+            comboBox.Location = new Point(665, 10);
+            comboBox.Name = "comboBox";
+            comboBox.Size = new Size(121, 23);
+            comboBox.TabIndex = 0;
             // 
             // pictureBox
             // 
@@ -65,6 +79,7 @@
             Controls.Add(toolPanel);
             Name = "Form1";
             Text = "Form1";
+            toolPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
             ResumeLayout(false);
         }
@@ -73,5 +88,6 @@
 
         private Panel toolPanel;
         private PictureBox pictureBox;
+        private ComboBox comboBox;
     }
 }

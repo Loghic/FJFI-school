@@ -4,6 +4,10 @@
 class Point{
     double x, y;
 public:
+    Point();
+    Point(double x, double y);
+    ~Point();
+
     double getX() const{
         return this->x;
     }
@@ -20,11 +24,11 @@ public:
         Point::y = y;
     }
     void print() const;
-    double distance(Point &other);
+    double distance(Point &other) const;
 
 };
 
 void print(Point &p);
-
+float distance(Point &p1, Point &p2);
 
 #endif //POINT_POINT_H

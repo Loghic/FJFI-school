@@ -7,16 +7,21 @@ using namespace std;
 
 
 int main() {
-    Point a;
-    a.setX(6);
-    a.setY(8);
+    Point a(6,8);
     Point b;
-    b.setX(0);
-    b.setY(0);
+    Point *pc;
+    pc = new Point(9,9);
+
     cout << "Print 1: ";
     print(a);
     cout << "Print 2: ";
     a.print();
-    cout << "Distance between point a and be is: " << a.distance(b) << endl;
+    Point c {3,4};
+    cout << "Distance between point a and b is: " << a.distance(b) << endl;
+    delete pc;
+    pc = nullptr;
+    cout << "Distance between point b and c is: " << b.distance(c) << endl;
+    cout << "Distance between point a and c is: " << a.distance(c) << endl;
+    cout << "|ac| = " << distance(a,c) << endl;
     return OK;
 }

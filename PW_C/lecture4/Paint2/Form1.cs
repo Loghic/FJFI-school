@@ -9,15 +9,54 @@ namespace Paint2
         const int rectangleInx = 1;
         const int ellipseInx = 2;
 
-        Pen pen = new Pen (Color.FromArgb(255, 0, 0), 3);
-        Brush brush = new SolidBrush (Color.Yellow);
+        Pen pen = new Pen(Color.FromArgb(255, 0, 0), 3);
+        SolidBrush brush = new SolidBrush(Color.Yellow);
+
+        private int colorCnt = 1;
 
         public Form1()
         {
             InitializeComponent();
             pictureBox_SizeChanged(null, null);
             comboBox.SelectedIndex = lineInx;
+            addButton(Color.Red);
+            addButton(Color.Green);
+            addButton(Color.Yellow);
         }
+
+        private void addButton(Color color)
+        {
+            Panel p = new Panel();
+            p.Width = colorPanel.Width;
+            p.Height = colorPanel.Height;
+            p.Top = colorPanel.Top; // Y
+            p.Left = colorCnt * colorPanel.Width + (colorCnt+1) * colorPanel.Left; // X
+            colorCnt++;
+            p.Parent = toolPanel;
+            // toolPanel.Controls.Add(p)
+            p.BackColor = color;
+            p.MouseDown += colorPanel_MouseDown;
+        }
+
+        private void colorPanel_MouseDown(object sender, MouseEventArgs e)
+        {
+            Panel panel = sender as Panel;
+            if (e.Button == MouseButtons.Middle || Control.ModifierKeys == Keys.Shift)
+            {
+                ColorDialog dlg = new ColorDialog();
+                dlg.Color = panel.BackColor;
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    panel.BackColor = dlg.Color;
+                    pen.Color = panel.BackColor;
+                }
+            }
+            else if (e.Button == MouseButtons.Right || Control.ModifierKeys == Keys.Control)
+                brush.Color = panel.BackColor;
+            else if (e.Button == MouseButtons.Left)
+                pen.Color = panel.BackColor;
+        }
+
 
         private void pictureBox_SizeChanged(object sender, EventArgs e)
         {
@@ -104,7 +143,7 @@ namespace Paint2
                 switch (tool)
                 {
                     case lineInx:
-                        g.DrawLine (pen, X0, Y0, e.X, e.Y);
+                        g.DrawLine(pen, X0, Y0, e.X, e.Y);
                         break;
                     case rectangleInx:
                         int X1 = X0;
@@ -113,12 +152,12 @@ namespace Paint2
                         int Y2 = e.Y;
                         if (X1 > X2) { int t = X1; X1 = X2; X2 = t; }
                         if (Y1 > Y2) { int t = Y1; Y1 = Y2; Y2 = t; }
-                        g.FillRectangle (brush, X1, Y1, X2 - X1, Y2 - Y1);
-                        g.DrawRectangle (pen, X1, Y1, X2 - X1, Y2 - Y1);
+                        g.FillRectangle(brush, X1, Y1, X2 - X1, Y2 - Y1);
+                        g.DrawRectangle(pen, X1, Y1, X2 - X1, Y2 - Y1);
                         break;
                     case ellipseInx:
-                        g.FillEllipse (brush, X0, Y0, e.X - X0, e.Y - Y0);
-                        g.DrawEllipse (pen, X0, Y0, e.X - X0, e.Y - Y0);
+                        g.FillEllipse(brush, X0, Y0, e.X - X0, e.Y - Y0);
+                        g.DrawEllipse(pen, X0, Y0, e.X - X0, e.Y - Y0);
                         break;
                 }
                 pictureBox.Invalidate();
@@ -130,5 +169,6 @@ namespace Paint2
             click = false;
         }
 
+     
     }
 }

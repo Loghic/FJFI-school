@@ -31,6 +31,7 @@
             toolPanel = new Panel();
             comboBox = new ComboBox();
             pictureBox = new PictureBox();
+            colorPanel = new Panel();
             toolPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
             SuspendLayout();
@@ -39,11 +40,12 @@
             // 
             toolPanel.BackColor = Color.FromArgb(255, 255, 192);
             toolPanel.BorderStyle = BorderStyle.Fixed3D;
+            toolPanel.Controls.Add(colorPanel);
             toolPanel.Controls.Add(comboBox);
             toolPanel.Dock = DockStyle.Top;
             toolPanel.Location = new Point(0, 0);
             toolPanel.Name = "toolPanel";
-            toolPanel.Size = new Size(800, 58);
+            toolPanel.Size = new Size(800, 46);
             toolPanel.TabIndex = 0;
             // 
             // comboBox
@@ -60,15 +62,24 @@
             // pictureBox
             // 
             pictureBox.Dock = DockStyle.Fill;
-            pictureBox.Location = new Point(0, 58);
+            pictureBox.Location = new Point(0, 46);
             pictureBox.Name = "pictureBox";
-            pictureBox.Size = new Size(800, 392);
+            pictureBox.Size = new Size(800, 404);
             pictureBox.TabIndex = 1;
             pictureBox.TabStop = false;
             pictureBox.SizeChanged += pictureBox_SizeChanged;
             pictureBox.MouseDown += pictureBox_MouseDown;
             pictureBox.MouseMove += pictureBox_MouseMove;
             pictureBox.MouseUp += pictureBox_MouseUp;
+            // 
+            // colorPanel
+            // 
+            colorPanel.BackColor = Color.Blue;
+            colorPanel.Location = new Point(7, 6);
+            colorPanel.Name = "colorPanel";
+            colorPanel.Size = new Size(63, 27);
+            colorPanel.TabIndex = 1;
+            colorPanel.MouseDown += colorPanel_MouseDown;
             // 
             // Form1
             // 
@@ -89,5 +100,6 @@
         private Panel toolPanel;
         private PictureBox pictureBox;
         private ComboBox comboBox;
+        private Panel colorPanel;
     }
 }

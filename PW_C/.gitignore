@@ -1,0 +1,9 @@
+build-*
+*.pro.user
+
+.vs
+bin
+obj
+
+*.vcxproj.user
+*.vcxproj.filter

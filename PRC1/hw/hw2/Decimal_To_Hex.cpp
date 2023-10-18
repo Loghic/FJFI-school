@@ -1,31 +1,44 @@
 #include <iostream>
 #include <fstream>
-#include <utility>
 #include <vector>
 #include <string>
+#include <filesystem> // used to check whether output file already exists; c++17
 
 using namespace std;
 
-enum {OK, TERMINATION_BY_USER = 10, HELP = 30, ERROR_INPUT = 100, ERROR_UNDEFINED_INPUT,
+enum ERRORS{OK, TERMINATION_BY_USER = 10, HELP = 30, ERROR_INPUT = 100, ERROR_UNDEFINED_INPUT,
         ERROR_CANNOT_OPEN_FILE, ERROR_CONVERSION};
+
+enum PARAMETERS{NO_PARAMETERS = 1, NO_INPUT_FILE_NAME = 3, NO_OUTPUT_FILE_NAME, NO_FILE_OVERWRITE_PARAMETER};
+
+enum FILE_OVERWRITE{OVERWRITE_UNDEFINED, NO_OVERWRITE, OVERWRITE};
+
+enum PROGRAM_PARAMETERS{INPUT_PARAMETER = 1, INPUT_FILE_NAME, OUTPUT_FILE_NAME, FILE_OVERWRITE_PARAMETER};
+
 
 const char HEX_ARR[] = {'0','1','2','3','4','5','6','7',
                     '8','9','a','b','c','d','e','f',};
 
 const char* help = R"ab(Decimal_To_Hex - program for converting whole decimal numbers to Hex numbers
-USE: Decimal_To_Hex [parameter] > [input file] < [output file]
+USE: Decimal_To_Hex [parameter1] [input file] [output file] [overwrite file]
+
 Possible parameters:
-1 input through command line.
-2 input using file )ab";
+'-c' or '/c' to input your numbers through command line
+'-f' or '/f' to input numbers using file
+'-t' or '/t' to terminate program
 
-const int BASE = 16;
+For existing output file it is possible put parameters:
+'-o' or '\o' to overwrite existing file
+'-a' or '\a' to append existing file)ab";
 
-const int NO_INPUT_FILE_NAME = 2;
-const int NO_OUTPUT_FILE_NAME = 4;
+const int HEX = 16;
+
+const int BASE = HEX;
 
 const string EMPTY_STRING = string();
 
 void print_help();
+
 void chooseInputType(int argc, char *argv[]);
 void inputFromCMDLine();
 void inputFromFile(int argc, char *argv[]);
@@ -33,7 +46,10 @@ void inputFromFile(int argc, char *argv[]);
  bool ioFileNames returns true if command line is going to be used for output
                   returns false if output is going to be saved in file
 */
-bool ioFileNames(int argc, char *argv[], string &inputFileName, string &outPutFileName);
+bool ioFileNames(int argc, char *argv[], string &inputFileName, string &outputFileName);
+void checkIfOutFileAlreadyExists(string &outputFileName, int overwrite);
+//
+
 void calculate(int input, bool toCMDLine = true, string outFileName = EMPTY_STRING);
 void print(vector<int> &printedVector, int control, bool controlON = true);
 void writeToFile(vector<int> &fileData, string outFileName);
@@ -53,20 +69,21 @@ void print_help()
 void chooseInputType(int argc, char *argv[])
 {
     string userDecision;
-    if (argc == 1) {
-        cout << "Hello, please enter '-c' or '/c' to input your numbers through command line \n"
-                "Press '-f' or '/f' to input numbers using file \n"
-                "Press '-t' or '/t' to terminate program\n";
+    if (argc == NO_PARAMETERS) {
+        cout << "Hello, please "
+                "enter '-c' or '/c' to input your numbers through command line \n"
+                "enter '-f' or '/f' to input numbers using file \n"
+                "enter '-t' or '/t' to terminate program\n";
         cin >> userDecision;
     }else{
-        userDecision = argv[1];
+        userDecision = argv[INPUT_PARAMETER];
     }
 
     if ((userDecision.length() != 2) ||  ((userDecision[0] != '-') && (userDecision[0] != '/'))){
         print_help();
         exit(ERROR_UNDEFINED_INPUT);
     }
-    switch(userDecision[1]){
+    switch(userDecision[INPUT_PARAMETER]){
         case 'c':
         case 'C':
             inputFromCMDLine();
@@ -102,35 +119,22 @@ void inputFromFile(int argc, char *argv[])
 {
     string inputFileName, outputFileName;
     ifstream inputFile;
+
     bool toCMDLine = ioFileNames(argc, argv, inputFileName, outputFileName);
-//    if (argc == NO_INPUT_FILE_NAME) {
-//        cout << "Please provide the name of input file: ";
-//        cin >> inputFileName;
-//        inputFile.open(inputFileName);
-//    }else inputFile.open(argv[2]);
-//
-//    if(argc == NO_OUTPUT_FILE_NAME) {
-//        outputFileName = argv[3];
-//        toCMDLine = false;
-//    }
-//    else{
-//        char answer;
-//        cout << "Would you like to save hex value to file? y/n\n";
-//        cin >> answer;
-//        if (answer == 'y'){
-//            cout << "Please enter name of output file: ";
-//            cin >> outputFileName;
-//            toCMDLine = false;
-//        }
-//    }
     inputFile.open(inputFileName);
 
-    if (!toCMDLine)
-    {
-        ofstream outFile(outputFileName);
-        outFile << "";
-        outFile.close();
+    int fileOverwriteSettings = OVERWRITE_UNDEFINED;
+    if (argc >= NO_FILE_OVERWRITE_PARAMETER){
+        if (argv[FILE_OVERWRITE_PARAMETER][0] == '-' || argv[FILE_OVERWRITE_PARAMETER][0] == '/'){
+            if (argv[FILE_OVERWRITE_PARAMETER][1] == 'o' || argv[FILE_OVERWRITE_PARAMETER][1] == 'O'){
+                fileOverwriteSettings = OVERWRITE;
+            }else if (argv[FILE_OVERWRITE_PARAMETER][1] == 'a' || argv[FILE_OVERWRITE_PARAMETER][1] == 'A')
+                fileOverwriteSettings = NO_OVERWRITE;
+        }
     }
+
+    if (!toCMDLine) checkIfOutFileAlreadyExists(outputFileName, fileOverwriteSettings);
+
 
     if (!(inputFile.is_open())){
         cerr << "Cannot open file!" << endl;
@@ -160,27 +164,47 @@ void inputFromFile(int argc, char *argv[])
 bool ioFileNames(int argc, char *argv[], string &inputFileName, string &outputFileName)
 {
     bool toCMDLine = true;
-    if (argc == NO_INPUT_FILE_NAME) {
+    if (argc < NO_INPUT_FILE_NAME){
         cout << "Please provide the name of input file: ";
         cin >> inputFileName;
 
-    }else inputFileName = argv[2];
+    }else inputFileName = argv[INPUT_FILE_NAME];
 
-    if(argc == NO_OUTPUT_FILE_NAME) {
-        outputFileName = argv[3];
-        toCMDLine = false;
-    }
-    else{
+    if(argc < NO_OUTPUT_FILE_NAME) {
         char answer;
         cout << "Would you like to save hex value to file? y/n\n";
         cin >> answer;
-        if (answer == 'y'){
+        if (answer == 'y' || answer == 'Y'){
             cout << "Please enter name of output file: ";
             cin >> outputFileName;
             toCMDLine = false;
         }
     }
+    else{
+        outputFileName = argv[OUTPUT_FILE_NAME];
+        toCMDLine = false;
+    }
     return toCMDLine; // returns whether the program is going to use cmd line for out
+}
+
+void checkIfOutFileAlreadyExists(string &outputFileName, int overwrite)
+{
+    namespace fs = std::filesystem;
+    fs::path f{ outputFileName};
+    if (fs::exists(f) && overwrite == OVERWRITE_UNDEFINED){
+        cout << outputFileName + " already exists. Would you like to overwrite it? y/n\n";
+        char answer;
+        cin >> answer;
+        if (answer == 'y' || answer == 'Y'){
+            ofstream outFile(outputFileName);
+            outFile << "";
+            outFile.close();
+        }
+    }else if(overwrite == OVERWRITE){
+        ofstream outFile(outputFileName);
+        outFile << "";
+        outFile.close();
+    }
 }
 
 void calculate(int input, bool toCMDLine, string outFileName)

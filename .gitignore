@@ -1,4 +1,5 @@
 .vscode
+.vs
 .DS_Store
 testPurpuse/
 UOA/
@@ -10,3 +11,11 @@ build.ninja
 cmake*
 untitled.iml
 .gitignore
+project.nuget.cache
+.dtb*
+.fut*
+.assets*
+.csproj*
+Form1.resx
+*.csproj*
+bin

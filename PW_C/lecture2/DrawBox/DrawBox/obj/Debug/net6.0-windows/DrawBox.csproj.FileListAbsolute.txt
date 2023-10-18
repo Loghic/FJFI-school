@@ -1,0 +1,17 @@
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\bin\Debug\net6.0-windows\DrawBox.exe
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\bin\Debug\net6.0-windows\DrawBox.deps.json
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\bin\Debug\net6.0-windows\DrawBox.runtimeconfig.json
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\bin\Debug\net6.0-windows\DrawBox.dll
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\bin\Debug\net6.0-windows\DrawBox.pdb
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\obj\Debug\net6.0-windows\DrawBox.csproj.AssemblyReference.cache
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\obj\Debug\net6.0-windows\DrawBox.Window.resources
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\obj\Debug\net6.0-windows\DrawBox.csproj.GenerateResource.cache
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\obj\Debug\net6.0-windows\DrawBox.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\obj\Debug\net6.0-windows\DrawBox.AssemblyInfoInputs.cache
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\obj\Debug\net6.0-windows\DrawBox.AssemblyInfo.cs
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\obj\Debug\net6.0-windows\DrawBox.csproj.CoreCompileInputs.cache
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\obj\Debug\net6.0-windows\DrawBox.dll
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\obj\Debug\net6.0-windows\refint\DrawBox.dll
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\obj\Debug\net6.0-windows\DrawBox.pdb
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\obj\Debug\net6.0-windows\DrawBox.genruntimeconfig.cache
+C:\Users\micham20\source\repos\lecture2\DrawBox\DrawBox\obj\Debug\net6.0-windows\ref\DrawBox.dll

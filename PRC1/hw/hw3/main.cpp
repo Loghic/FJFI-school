@@ -1,5 +1,3 @@
-//written by teacher
-
 #include <iostream>
 #include "list.h"
 

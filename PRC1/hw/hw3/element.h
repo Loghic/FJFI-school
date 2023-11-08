@@ -1,3 +1,5 @@
+// written by teacher
+
 #ifndef HW3_ELEMENT_H
 #define HW3_ELEMENT_H
 

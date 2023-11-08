@@ -1,5 +1,8 @@
+//written by teacher
+
 #include <iostream>
 #include "list.h"
+
 
 using namespace std;
 

@@ -10,6 +10,8 @@ class List{
     void initList();
     void copyDataFrom(List &source);
     Element* find(Data d);
+    Element* findMin(Element* from);
+    void swap(Element *a,Element *b);
 public:
     List();
     List(List &other);
@@ -37,6 +39,7 @@ public:
         this->copyDataFrom(other);
     }
     bool remove(Data d);
+    void sort();
 };
 
 #endif //HW3_LIST_H

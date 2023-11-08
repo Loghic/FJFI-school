@@ -1,4 +1,5 @@
 #include "list.h"
+#include <iostream>
 
 
 List::List()
@@ -109,4 +110,41 @@ bool List::remove(Data d){
     delete del;
     counter--;
     return true;
+}
+
+void List::sort()
+{
+    Element *tmp = first->next;
+    Element *min = new Element;
+    while (tmp->next != last)
+    {
+        min = findMin(tmp);
+        if (tmp == min){
+            tmp = tmp->next;
+            continue;
+        }else{
+            swap(min, tmp);
+            tmp = tmp->next;
+        }
+    }
+}
+
+Element* List::findMin(Element* from)
+{
+    Element* min = from;
+    while (from != last)
+    {
+        if (from->getData() < min->getData()){
+            min = from;
+        }
+        from = from->next;
+    }
+    return min;
+}
+
+void List::swap(Element *a,Element *b)
+{
+    Data tmp = a->getData();
+    a->setData(b->getData());
+    b->setData(tmp);
 }

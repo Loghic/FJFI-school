@@ -15,5 +15,10 @@ int main()
 
     }
     l.print();
+
+    cout << "-------------\nSorted list from lowest to highest: " << endl;
+    l.sort();
+    l.print();
+
     return 0;
 }

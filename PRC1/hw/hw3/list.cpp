@@ -112,6 +112,10 @@ bool List::remove(Data d){
     return true;
 }
 
+/*
+My implementation of 3 given functions
+ */
+
 void List::sort()
 {
     Element *tmp = first->next;

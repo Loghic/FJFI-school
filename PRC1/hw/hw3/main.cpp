@@ -4,6 +4,8 @@
 
 using namespace std;
 
+enum {OK};
+
 int main()
 {
     List l;
@@ -20,5 +22,5 @@ int main()
     l.sort();
     l.print();
 
-    return 0;
+    return OK;
 }

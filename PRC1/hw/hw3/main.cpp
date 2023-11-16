@@ -16,7 +16,7 @@ int main()
     }
     l.print();
 
-    cout << "-------------\nSorted list from lowest to highest: " << endl;
+    cout << "-------------\nSorted list from the lowest to the highest: " << endl;
     l.sort();
     l.print();
 

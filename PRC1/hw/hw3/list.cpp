@@ -119,12 +119,12 @@ void List::sort()
     while (tmp->next != last)
     {
         min = findMin(tmp);
-        if (tmp == min){
+        if (min->getData() >= tmp->getData()){
             tmp = tmp->next;
             continue;
         }else{
-            swap(min, tmp);
-            tmp = tmp->next;
+            swap(tmp, min);
+            tmp = min->next;
         }
     }
 }
@@ -144,7 +144,52 @@ Element* List::findMin(Element* from)
 
 void List::swap(Element *a,Element *b)
 {
-    Data tmp = a->getData();
-    a->setData(b->getData());
-    b->setData(tmp);
+    /*
+    These will be used later, could have been done with less variables but I feel like this
+    makes the code more readable
+     */
+    auto *aNext = a->next;
+    auto *bNext = b->next;
+    auto *aPrev = a->prev;
+    auto *bPrev = b->prev;
+
+    // this code executes is a and be are neighbors
+    if (a->next == b)
+    {
+        //we make a.prev point to b and b.prev to a.prev
+        aPrev->next = b;
+        b->prev = aPrev;
+
+        // now we change a and b
+        b->next = a;
+        a->prev = b;
+
+        //at last we change pointers of a.next to b.next and b.next.prev to a;
+        a->next =bNext;
+        bNext->prev = a;
+    }else {
+        //firstly we swap pointers before a and b i.e. a.prev points to b and be points to it back  same with
+        //b.prev points to a and a points to it back
+        aPrev->next = b;
+        b->prev = aPrev;
+        bPrev->next = a;
+        a->prev = bPrev;
+
+        //here we do the same thing but with a.next and b.next
+        a->next = bNext;
+        bNext->prev = a;
+        b->next = aNext;
+        aNext->prev = b;
+    }
+
+
+    /*
+    This can be only used if we carry only small amount of data, e.g. only some number like
+    in this example we have only 1 int in element. So we do not need to swap the whole blocks with pointers
+    only the data.
+
+//    Data tmp = a->getData();
+//    a->setData(b->getData());
+//    b->setData(tmp);
+     */
 }

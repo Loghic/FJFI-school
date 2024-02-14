@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Moje HTML Stránka</title>
+
+    <style>
+        body{
+            background-color: red;
+            /* background: transparent; */
+        }
+        h1, h2, h3{
+            color: rgb(222, 227, 126);
+
+        }
+        img{
+            max-width: 100%;
+        }
+
+        body{
+            background-color: navy;
+            background-color: linear-gradient(180deg, navy, black);
+            background-image: url("stars.png");
+            background-repeat: r;
+        }
+
+        .btn{
+            background-color: #da820a;
+            border: none;
+            border-radius: 4px;
+            box-shadow: 2px 2px 2px #333;
+            color: #fff;
+            margin: 12px 0 0 26px;
+            padding: 8px;
+            text-shadow: 1px 1px 0px #777;
+        }
+    </style>
+</head>
+<body>
+    <img src="earth.webp" alt="Obrázek">
+        <div class="content">
+
+            <h1>Vítejte na Mém Oblíbeném Místě</h1>
+            <h2>Podívejte se na krásu přírody</h2>
+
+            <p>Přijďte a podívejte se na úchvatnou krásu přírody, kterou toto místo nabízí. Kdekoliv se podíváte, budete omámeni nádhernými scenériemi, které poskytují klid a inspiraci. Zážitek z procházky lesem vám otevře nové perspektivy a možná objevíte krásné kouty, které jste předtím neviděli. A večerní pozorování hvězd vám poskytne nezapomenutelný pohled na náš nádherný vesmír.</p>
+
+            <p>Zapomeňte na ruch města a ponořte se do klidu a harmonie, které naše oblíbené místo poskytuje. Každé roční období zde má své vlastní kouzlo, ať už jsou to rozkvetlé jarní květiny, teplé letní dny nebo podzimní palety barev. V zimě se les proměňuje v pohádkový sníh, který dodává krajině tichý a klidný dotek. Zdejší příroda vám nabízí útočiště od každodenního shonu a přináší vám okamžiky klidu a radosti.</p>
+
+            <h3>Zážitek, který stojí za to sdílet</h3>
+
+            <p>Toto místo je pro mě nejúžasnější na světě. Mám zde klid a pohodu, a rád/a bych se s vámi podělil/a o tuto krásu.</p>
+
+            <ul>
+                <li>Procházky po lese</li>
+                <li>Pozorování hvězd v noci</li>
+                <li>Pikniky s rodinou a přáteli</li>
+            </ul>
+
+            <p>Pro více informací navštivte <a href="https://www.fjfi.cvut.cz" target="_blank">mé oblíbené místo</a>.</p>
+
+            <form>
+                <p>
+                    kolik hvezd vidite na pozadi?
+                </p>
+                <input type="text">
+                <input type="submit" value="Odeslat" class="btn"/>
+            </form>
+
+
+    <script>
+        document.getElementById('starForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var starCount = document.getElementById('starCount').value;
+            document.getElementById('answer').innerHTML = 'Vidíte ' + 38 + ' hvězd na pozadí.';
+            document.getElementById('answer').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
+

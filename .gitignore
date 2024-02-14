@@ -21,3 +21,11 @@ obj
 *.vcxproj.filter
 PRC1/ZAPOCET
 PRC1/ZAPOCET2
+*.jpg
+*.png
+*.mp*
+*.wav
+*.jpeg
+*.pdf
+*.zip
+*.webp

@@ -1,0 +1,28 @@
+<h1>Vítejte na Mém Oblíbeném Místě</h1>
+            <h2>Podívejte se na krásu přírody</h2>
+
+            <p>Přijďte a podívejte se na úchvatnou krásu přírody, kterou toto místo nabízí. Kdekoliv se podíváte, budete omámeni nádhernými scenériemi, které poskytují klid a inspiraci. Zážitek z procházky lesem vám otevře nové perspektivy a možná objevíte krásné kouty, které jste předtím neviděli. A večerní pozorování hvězd vám poskytne nezapomenutelný pohled na náš nádherný vesmír.</p>
+
+            <p>Zapomeňte na ruch města a ponořte se do klidu a harmonie, které naše oblíbené místo poskytuje. Každé roční období zde má své vlastní kouzlo, ať už jsou to rozkvetlé jarní květiny, teplé letní dny nebo podzimní palety barev. V zimě se les proměňuje v pohádkový sníh, který dodává krajině tichý a klidný dotek. Zdejší příroda vám nabízí útočiště od každodenního shonu a přináší vám okamžiky klidu a radosti.</p>
+
+            <h3>Zážitek, který stojí za to sdílet</h3>
+
+            <p>Toto místo je pro mě nejúžasnější na světě. Mám zde klid a pohodu, a rád/a bych se s vámi podělil/a o tuto krásu.</p>
+
+            <ul>
+                <li>Procházky po lese</li>
+                <li>Pozorování hvězd v noci</li>
+                <li>Pikniky s rodinou a přáteli</li>
+            </ul>
+
+            <p>Pro více informací navštivte <a href="https://www.fjfi.cvut.cz" target="_blank">mé oblíbené místo</a>.</p>
+
+
+                <script>
+        document.getElementById('starForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var starCount = document.getElementById('starCount').value;
+            document.getElementById('answer').innerHTML = 'Vidíte ' + 38 + ' hvězd na pozadí.';
+            document.getElementById('answer').style.display = 'block';
+        });
+    </script>

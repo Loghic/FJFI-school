@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     string number1;
     string number2;
 
-    chooseYourInput( argc, argv, number1, number2);
+    chooseYourInput(argc, argv, number1, number2);
 
     return OK;
 }
@@ -112,21 +112,21 @@ void print(BigInt num1, BigInt num2)
         long long int number2 = stoll(num2.to_string());
         cout << "Print with tests:\n";
         cout << "\nAddition: \n";
-        cout << "Calculated number by calculator.h: ";
+        cout << "Calculated number by BigInt.h: ";
         cout << num1 + num2 << endl;
         cout << "Number should be: ";
         cout << number1 + number2 << endl;
         cout << endl;
 
         cout << "Subtraction: \n";
-        cout << "Calculated number by calculator.h: ";
+        cout << "Calculated number by BigInt.h: ";
         cout << num1 - num2 << endl;
         cout << "Number should be: ";
         cout << number1 - number2 << endl;
         cout << endl;
 
         cout << "Multiplication: \n";
-        cout << "Calculated number by calculator.h: ";
+        cout << "Calculated number by BigInt.h: ";
         cout << num1 * num2 << endl;
         if (num1.to_string().size() + num2.to_string().size() < LLI_MAX_LEN){
             cout << "Number should be: ";
@@ -135,10 +135,17 @@ void print(BigInt num1, BigInt num2)
         cout << endl;
 
         cout << "Division: \n";
-        cout << "Calculated number by calculator.h: ";
+        cout << "Calculated number by BigInt.h: ";
         cout << num1 / num2 << endl;
         cout << "Number should be: ";
         cout << number1 / number2 << endl;
+        cout << endl;
+
+        cout << "Module: \n";
+        cout << "Calculated number by BigInt.h: ";
+        cout << num1 % num2 << endl;
+        cout << "Number should be: ";
+        cout << number1 % number2 << endl;
         cout << endl;
     }else {
         cout << "\nAddition: \n";
@@ -155,6 +162,10 @@ void print(BigInt num1, BigInt num2)
 
         cout << "Division: \n";
         cout << num1 / num2 << endl;
+        cout << endl;
+
+        cout << "Module: \n";
+        cout << num1 % num2 << endl;
         cout << endl;
     }
 }

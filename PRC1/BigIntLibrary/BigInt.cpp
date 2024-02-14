@@ -458,3 +458,12 @@ BigInt BigInt::operator/(const BigInt& number) const
 
     return res;
 }
+
+BigInt BigInt::operator%(const BigInt& number) const
+{
+    BigInt mul;
+    mul = *this / number;
+    BigInt res;
+    res = *this - (mul*number);
+    return res;
+}

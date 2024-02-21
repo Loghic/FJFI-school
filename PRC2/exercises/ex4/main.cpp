@@ -2,7 +2,7 @@
 
 using namespace std;
 
-const int shift = 'a' - 'A';
+const int SHIFT = 'a' - 'A';
 
 string toUpper(string &s)
 {

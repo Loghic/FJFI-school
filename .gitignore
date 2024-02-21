@@ -29,3 +29,5 @@ PRC1/ZAPOCET2
 *.pdf
 *.zip
 *.webp
+.venv
+*.pages

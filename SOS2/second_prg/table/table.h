@@ -1,0 +1,34 @@
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include <QMainWindow>
+const int N = 8;
+
+QT_BEGIN_NAMESPACE
+namespace Ui {
+class MainWindow;
+}
+
+QT_END_NAMESPACE
+
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+
+private slots:
+    void on_actionRun_triggered();
+
+    void on_actionQuit_triggered();
+
+private:
+    Ui::MainWindow *ui;
+    int a [N];
+    bool stop;
+    void place(int k);
+    void display();
+};
+#endif // MAINWINDOW_H

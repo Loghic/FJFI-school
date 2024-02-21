@@ -9,7 +9,7 @@ string toUpper(string &s)
     for (int i = 0; i < s.length(); i++)
     {
         if (s[i] >= 'a' && s[i] <= 'z'){
-            s[i] -= shift;
+            s[i] -= SHIFT;
         }
     }
     return s;

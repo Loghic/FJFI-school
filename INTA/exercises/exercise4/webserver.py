@@ -1,6 +1,8 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+
 hostName = "localhost"
+#Can change Changing serverports is posssible
 serverPort = 8080
 
 class MyRequestHandler(BaseHTTPRequestHandler):

@@ -1,0 +1,8 @@
+from pathlib import Path
+import json
+
+directory = Path("images")
+imgs = directory.iterdir()
+data = json.dumps([str(i) for i in imgs])
+with open("data.json", "w") as f:
+    print(f"data = {data}", file=f)

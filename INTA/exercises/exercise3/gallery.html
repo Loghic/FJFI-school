@@ -1,0 +1,43 @@
+<!-- For webserver -->
+<!-- python -m http.server --directory cv03 -->
+
+<!DOCTYPE html>
+<html lang="en">python -m http.server --directory cv03
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pet Gallery</title>
+  <link href="modern-reset.css" rel="stylesheet" type="text/css">
+  <link href="gallery.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <script src="https://unpkg.com/mithril/mithril.js"></script>
+  <script type="text/javascript" src="gallery.js"></script>
+  <script type="text/javascript" src="data.json"></script>
+  <main class="gallery-view">
+    <h1>Pet Gallery</h1>
+    <p>163 images</p>
+    <section id="gallery-container">
+
+    </section>
+  </main>
+  <main class="image-view">
+    <header>
+        <p> 3 / 163</p>
+        <p> 219-1024x640.jpg</p>
+        <a href="#!/gallery"></a>"
+    </header>
+    <section>
+        <a class="button-prev" href="#!/image2">
+            <p>◄</p>
+        </a>
+        <a class="button-next" href="#!/image/4">
+            <p>►</p>
+        </a>
+    <div>
+        <img src = "images/219-1024x640.jpg">
+    </div>
+    </section>
+  </main>
+</body>
+</html>

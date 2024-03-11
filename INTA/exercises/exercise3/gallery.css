@@ -1,0 +1,157 @@
+/* general styles */
+main {
+    margin: 1em;
+}
+
+:is(h1, h2, h3, h4, h5, h6):not(:first-child) {
+    margin-top: 1em;
+}
+
+:is(h1, h2, h3, h4, h5, h6):not(:last-child) {
+    margin-bottom: 0.5em;
+}
+
+
+/* gallery view */
+main.gallery-view section:empty::before {
+    content: "No images found...";
+}
+
+main.gallery-view section {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+main.gallery-view section a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 150px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    background-color: #eee;
+    content-visibility: auto;  /* experimental property, not supported on Firefox before version 124 */
+    overflow: hidden;
+    transition: all .2s ease-in-out;
+}
+
+main.gallery-view section a:hover {
+    box-shadow: 5px 5px 5px violet;
+}
+
+main.gallery-view section img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+main.gallery-view button.load {
+    width: 100%;
+    margin-top: 10px;
+}
+
+
+/* image view */
+:is(html, body):has(main.image-view) {
+    height: 100%;
+}
+
+main.image-view {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    margin: 0;
+}
+
+main.image-view header {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: auto;
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    justify-content: space-between;
+    height: 1.5em;
+    padding-left: 1ex;
+    padding-right: 1ex;
+    font-weight: bold;
+}
+
+main.image-view header a {
+    text-decoration: none;
+    color: black;
+    padding-left: 1ex;
+    padding-right: 1ex;
+    transition: all .2s ease-in-out;
+}
+
+main.image-view header a:hover {
+    background-color: gray;
+    opacity: 0.25;
+}
+
+main.image-view header > * {
+    display: inline-block;
+}
+
+main.image-view section {
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: auto;
+    display: flex;
+    flex-direction: row;
+}
+
+main.image-view div {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    margin-left: -50%;
+    margin-right: -50%;
+}
+
+main.image-view img {
+    margin: auto;
+    max-width: 100%;
+    max-height: calc(100vh - 1.5em);
+    object-fit: contain;
+    max-inline-size: 100%;
+    block-size: auto;
+}
+
+main.image-view :is(.button-prev, .button-next) {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    width: 50%;
+    z-index: 1;
+    opacity: 0;
+    color: black;
+    text-align: center;
+    text-decoration: none;
+    font-size: 2em;
+    font-weight: bold;
+    transition: all .2s ease-in-out;
+}
+
+main.image-view :is(.button-prev, .button-next):hover {
+    color: white;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 1;
+}
+
+main.image-view .button-prev {
+    order: 0;
+}
+
+main.image-view .button-next {
+    order: 2;
+}

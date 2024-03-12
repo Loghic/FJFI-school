@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+#python3.10 -m venv .venv
+#source .venv/bin/activate
+#pip install pyqt5
+
 from __future__ import print_function
 
 import os, sys, re, importlib

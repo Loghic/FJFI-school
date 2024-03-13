@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include "tree.h"
 
 using namespace std;
@@ -15,6 +14,8 @@ int main() {
     t.insert(5);
     t.insert(11);
     t.insert(27);
+    t.remove(30);
     t.print();
+    cout << (t.contains(30) ? "TRUE" : "FALSE") << endl;
     return 0;
 }

@@ -1,0 +1,37 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="{{ lang | default:'en' }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}{% endblock %}</title>
+        <!-- <link rel="stylesheet" type="text/css" href="{% static "pokus/pokus.css" %}"> -->
+        {% block head %}
+        {% endblock %}
+    </head>
+    <body>
+        <header>
+            <nav>
+                <a href="{% url 'some_page' %}">Home</a>
+                <a href="{% url 'some_page' %}/subpage-1">Subpage 1</a>
+                <a href="{% url 'some_page' %}/subpage-2">Subpage 2</a>
+            </nav>
+        </header>
+        <main id="content">
+            {% block content %}
+            <article id="content-left">
+                {% block content_left %}
+                {% endblock %}
+            </article>
+            <aside id="sidebar">
+                {% block sidebar %}
+                {% endblock %}
+            </aside>
+            {% endblock %}
+        </main>
+        <footer>
+            <p>Powered by <a href="https://www.djangoproject.com/">Django</a>.</p>
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,28 @@
+{% extends "pokus/base.html" %}
+{% load static %}
+
+{% block title %}
+Some page title
+{% endblock %}
+
+{% block head %}
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'pokus/some_page.css' %}"> -->
+{% endblock %}
+
+{% block content %}
+<article>
+<section>
+    <p>Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. ...</p>
+    <p>At solmen va esser necessi far uniform grammatica, pronunciation e plu commun paroles. ...</p>
+</section>
+<section>
+    <h2>Použití proměnných v šabloně</h2>
+    <dl>
+    {% for key, value in some_parameters.items %}
+        <dt>{{ key }}</dt>
+        <dd>{{ value }}</dd>
+    {% endfor %}
+    </dl>
+</section>
+</article>
+{% endblock %}

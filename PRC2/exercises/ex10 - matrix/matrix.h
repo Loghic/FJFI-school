@@ -22,13 +22,23 @@ public:
             cout << "Constructor without parameters\n";
         #endif
     }
-    Matrix(T offDiag, T diag); // constructor with param
+    Matrix(T offDiag, T diag); // constructor with params
+    Matrix(T diag); // constructor with one param
     Matrix(const Matrix<T,N> &other); //copy constructor
     Matrix(Matrix<T,N> &&other); //move constructor
     ~Matrix(); // destructor
     Matrix<T,N>& operator=(const Matrix<T,N> &rhs); //copy ... (rhs = right hand side)
     Matrix<T,N>& operator=(Matrix<T,N> &&rhs); //move
     T& operator()(unsigned int row, unsigned int column); // indexing of matrix eg. m(5,3);
+    //trace
+    T operator~() const{
+        T res = 0;
+        for (auto i = 0; i < N; i++){
+//             res += this->operator()(i,i);
+            res += (*this)(i,i);
+        }
+        return res;
+    }
 };
 
 template<typename T, unsigned int N>
@@ -45,6 +55,27 @@ Matrix<T,N>::Matrix(T offDiag, T diag)
     for (auto i = 0; i < N; i++){
         for (auto j = 0; j < N; j++){
             (*this)(i,j) = (i == j ? diag : offDiag); // usage of operator()
+//            this->operator()(i,j) = (i == j ? diag : offDiag); // same as the example above
+        }
+    }
+
+}
+
+//fills matrix with zeros, unless they are on diagonal
+template<typename T, unsigned int N>
+Matrix<T,N>::Matrix(T diag)
+        : data(new T[N*N])
+{
+//    if (DEBUG){
+//        cout << "Constructor\n";
+//    }
+
+#ifdef DEBUG
+    cout << "Constructor\n";
+#endif
+    for (auto i = 0; i < N; i++){
+        for (auto j = 0; j < N; j++){
+            (*this)(i,j) = (i == j ? diag : 0); // usage of operator()
 //            this->operator()(i,j) = (i == j ? diag : offDiag); // same as the example above
         }
     }
@@ -156,4 +187,44 @@ Matrix<T,N> operator+(Matrix<T,N>&a, Matrix<T,N>&b) // overloading of + operator
     return c;
 }
 
+//Compare operator - Equal
+template<typename T, unsigned int N>
+bool operator==(Matrix<T,N> &a, Matrix<T,N> &b)
+{
+    if (&a == &b){
+        return true;
+    }
+
+    for (auto i = 0; i < N; i++){
+        for (auto j = 0; j < N; j++){
+            if (a(i,j) != b(i,j)){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+
+//Compare operator - Not equal
+template<typename T, unsigned int N>
+bool operator!=(Matrix<T,N> &a, Matrix<T,N> &b)
+{
+    return !(a==b);
+}
+
+//Matrix multiplication
+template <typename T, unsigned int N>
+Matrix<T,N> operator*(Matrix<T,N> &a, Matrix<T,N> &b)
+{
+    Matrix<T,N> c(0);
+    for (auto i = 0; i < N; i++){
+        for (auto j = 0; j < N; j++){
+            for (auto k = 0; k < N; k++){
+                c(i,j) += a(i,k) * b(k,j);
+            }
+        }
+    }
+    return c;
+}
 #endif //EX10_MATRIX_MATRIX_H

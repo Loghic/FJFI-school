@@ -31,11 +31,11 @@ public:
     Matrix<T,N>& operator=(Matrix<T,N> &&rhs); //move
     T& operator()(unsigned int row, unsigned int column); // indexing of matrix eg. m(5,3);
     //trace
-    T operator~() const{
+    T operator~(){
         T res = 0;
         for (auto i = 0; i < N; i++){
-             res += this->operator()(i,i);
-//            res += (*this)(i,i);
+//             res += this->operator()(i,i);
+            res += (*this)(i,i);
         }
         return res;
     }

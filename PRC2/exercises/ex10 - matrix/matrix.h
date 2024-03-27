@@ -34,8 +34,8 @@ public:
     T operator~() const{
         T res = 0;
         for (auto i = 0; i < N; i++){
-//             res += this->operator()(i,i);
-            res += (*this)(i,i);
+             res += this->operator()(i,i);
+//            res += (*this)(i,i);
         }
         return res;
     }

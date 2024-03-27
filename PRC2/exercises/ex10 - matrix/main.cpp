@@ -18,6 +18,9 @@ int main() {
     cout << m << endl;
     cout << n << endl;
     o = m * n;
-    cout << o;
+    cout << o << endl;
+    int x = 0;
+    x = ~o;
+    cout << x << endl;
     return 0;
 }

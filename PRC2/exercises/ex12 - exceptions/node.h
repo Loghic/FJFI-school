@@ -23,7 +23,7 @@ public:
         std::cout << std::endl;
     }
 
-    //declaring a template class as a friend
+    //declaring a template class as a friend in order to acces it
     template<typename X> friend class Tree;
 };
 

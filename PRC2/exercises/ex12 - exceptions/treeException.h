@@ -15,7 +15,7 @@ class TreeException : public exception{ //exception is part of std
 public:
     TreeException(string msg) : message(msg) {;}
     virtual const char* what() const noexcept{
-       // we have to convert string to char*
+       // we have to convert string to char* ; otherwise it gives us an error
         return message.c_str(); // constant char*
 //        return message.data(); // non-constant char *
     }

@@ -3,7 +3,7 @@
 
 using namespace std;
 
-// new can throw bad alloc
+// new can throw bad_alloc
 
 int main() {
     // we have to specify which datatype is the structure going to be

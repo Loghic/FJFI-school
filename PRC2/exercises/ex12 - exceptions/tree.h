@@ -57,6 +57,7 @@ void Tree<T>::insertIntoSubTree(Node<T> *&r, T &data)
 //            throw TreeException("Memory allocation failed");
 //        }
 
+        //another possible way to do it
         r = new(nothrow) Node<T>(data);
         if (!r){
             throw TreeException("Memory allocation failed");

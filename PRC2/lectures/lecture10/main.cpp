@@ -40,8 +40,33 @@ void read_file(const char *name)
     fclose(f);
 }
 
+void actualization(const char *name)
+{
+    FILE* f = fopen(name, "rb+"); // + means possibility with writing in
+    //    FILE* f = fopen(name, "r+b"); // same as line above; different way to write it
+    if (!f){
+        printf("Couldn't open file");
+        return;
+    }
+
+    int i;
+    while (fread(&i, sizeof(int), 1, f)){
+        if(i % 2 == 0){
+            i = i/2; // if number is even we are going to write its half
+            // https://en.cppreference.com/w/c/io/fgetpos
+//            size_t position = ftell(f); //returns current position of file indicator
+            fseek(f,  - (long) sizeof(int), SEEK_CUR); //without long we would make enormous file
+            fwrite(&i, sizeof(int), 1, f);
+            fseek(f, 0, SEEK_CUR);
+        }
+    }
+}
+
 int main() {
     write_to_file(NAME);
+    read_file(NAME);
+    printf("\n");
+    actualization(NAME);
     read_file(NAME);
     return 0;
 }

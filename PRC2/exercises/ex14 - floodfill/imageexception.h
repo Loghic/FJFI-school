@@ -10,7 +10,7 @@ public:
     ImageException(std::string msg) : message(msg) {};
     virtual const char* what() const noexcept
     {
-        return message.c_str();
+        return message.c_str(); // can be accessed with e.what()
     }
 };
 

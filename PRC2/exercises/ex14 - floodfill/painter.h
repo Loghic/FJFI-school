@@ -44,7 +44,7 @@ public:
         }else{
             (*canvas) << "\033[0m"; // reset text color
         }
-        calls++;
+        calls++; // should update in each call of function
 //        (*canvas) << "\033[31m"; // set text color to red
 //        (*canvas) << "Helloo" << std::endl;
 //        (*canvas) << "\033[0m"; // reset text color

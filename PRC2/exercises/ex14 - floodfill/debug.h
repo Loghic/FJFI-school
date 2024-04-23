@@ -7,6 +7,6 @@
 
 #define PRINT
 
-//#undef PRINT
+#undef PRINT
 
 #endif //EX14___FLOODFILL_DEBUG_H

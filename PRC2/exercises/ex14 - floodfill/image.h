@@ -178,6 +178,7 @@ void PBMImage::loadFromFile(std::string path)
     bool dimensionsRead = false;
     while (std::getline(f, s)){
         if (s[0] == '#') continue;
+        // small 'p' be might be useless
         if (!headerRead && s[0] == 'p' || !headerRead && s[0] == 'P') {
             headerRead = true;
             continue;

@@ -74,6 +74,14 @@ int main(int argc, char* argv[]) {
     painter.setStream(cout);
     i.setPainter(&painter);
 
+    // test whether the call of paint method works
+//    i.paint();
+//    cout << "Test" << endl;
+//    i.paint();
+//    cout << "Test2" << endl;
+//    i.paint();
+//    cout << "Test3" << endl;
+//    i.paint()
 
     floodfill(i, 0, 0, 3);
 

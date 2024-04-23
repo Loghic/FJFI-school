@@ -37,7 +37,18 @@ public:
     }
     void setStream(std::ostream &os) {canvas = &os;}
     virtual ~StreamPainter() {}
-    void paint() const {std::cout << "Hello world\n";}
+    void paint() const {
+        static int calls;
+        if (calls % 2 == 0){
+            (*canvas) << "\033[31m"; // set text color to red
+        }else{
+            (*canvas) << "\033[0m"; // reset text color
+        }
+        calls++;
+//        (*canvas) << "\033[31m"; // set text color to red
+//        (*canvas) << "Helloo" << std::endl;
+//        (*canvas) << "\033[0m"; // reset text color
+    }
 };
 
 #endif //EX14___FLOODFILL_PAINTER_H

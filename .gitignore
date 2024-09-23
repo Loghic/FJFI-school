@@ -31,3 +31,9 @@ PRC1/ZAPOCET2
 *.webp
 .venv
 *.pages
+*project*
+*contents*
+*IDE*
+*/xcuserdata
+*xcodeproject*
+*xcodeproj

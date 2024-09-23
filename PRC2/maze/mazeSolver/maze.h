@@ -15,13 +15,6 @@
 
 #include <QDebug>
 
-// struct Node {
-//     int x, y;
-//     float dist;
-//     bool operator>(const Node& other) const {
-//         return dist > other.dist;
-//     }
-// };
 
 struct Node {
     int x, y;

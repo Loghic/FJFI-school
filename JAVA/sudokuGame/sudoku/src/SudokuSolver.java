@@ -1,5 +1,3 @@
-import java.util.concurrent.TimeUnit;
-
 public class SudokuSolver implements SudokuImplementation {
 
     public SudokuSolver() {
@@ -9,9 +7,9 @@ public class SudokuSolver implements SudokuImplementation {
     public void goButtonPressed(Integer[][] leftSudokuValues, SudokuController resultAcceptor) {
         System.out.println("Solving Sudoku...");
 
-        long startTime = System.currentTimeMillis(); // Start time
+        long startTime = System.currentTimeMillis(); // Record the start time
 
-        // Make a copy of the board to solve
+        // Copy the board to solve
         Integer[][] sudokuBoard = new Integer[9][9];
         for (int i = 0; i < 9; i++) {
             System.arraycopy(leftSudokuValues[i], 0, sudokuBoard[i], 0, 9);
@@ -19,17 +17,17 @@ public class SudokuSolver implements SudokuImplementation {
 
         boolean solved = solveSudoku(sudokuBoard);
 
-        long endTime = System.currentTimeMillis(); // End time
-        long elapsedTime = endTime - startTime; // Time taken in milliseconds
+        long endTime = System.currentTimeMillis(); // Record the end time
+        long elapsedTime = endTime - startTime; // Calculate the elapsed time
 
-        // Notify the result
+        // Notify the result of solving
         resultAcceptor.setSudokuResult(sudokuBoard);
         resultAcceptor.setSudokuCompleted(solved);
         resultAcceptor.setSudokuTime(elapsedTime + "ms");
         System.out.println("Done! Solved in " + elapsedTime + "ms");
     }
 
-    // Basic backtracking solver
+    // Solve the Sudoku using a backtracking algorithm
     private boolean solveSudoku(Integer[][] board) {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
@@ -43,29 +41,30 @@ public class SudokuSolver implements SudokuImplementation {
                             board[row][col] = null;
                         }
                     }
-                    return false; // Trigger backtracking
+                    return false; // Backtrack if no valid number found
                 }
             }
         }
-        return true; // All cells are filled
+        return true; // Sudoku solved
     }
 
+    // Check if a number can be placed in a specific cell
     private boolean isValid(Integer[][] board, int row, int col, int num) {
-        // Check row
+        // Check the row
         for (int x = 0; x < 9; x++) {
             if (board[row][x] != null && board[row][x] == num) {
                 return false;
             }
         }
 
-        // Check column
+        // Check the column
         for (int x = 0; x < 9; x++) {
             if (board[x][col] != null && board[x][col] == num) {
                 return false;
             }
         }
 
-        // Check 3x3 grid
+        // Check the 3x3 grid
         int startRow = row - row % 3;
         int startCol = col - col % 3;
         for (int r = startRow; r < startRow + 3; r++) {

@@ -12,6 +12,7 @@ untitled.iml
 .gitignore
 build-*
 *.pro.user
+*.out
 
 .vs
 bin

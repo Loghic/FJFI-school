@@ -10,7 +10,7 @@ c     declare variables
       double precision PI
       parameter        (PI=3.14159265358979d0)   ! pi constant
       double precision height,vel,angle,m        ! gun parameters
-      double precision gravity,dt                ! gravity, timestep
+      double precision k,gravity,dt              ! air resistence, gravity, timestep
       double precision time(0:max_n)             ! sequence of times
       double precision x(0:max_n),y(0:max_n)     ! projectile position
       double precision u(0:max_n),v(0:max_n)     ! projectile velocities
@@ -24,6 +24,7 @@ c     set initial parameters
       m      = 0.145d0          ! projectile mass
       gravity= -9.81d0          ! gravity constant
       dt     = 0.01d0           ! time step
+      k      = 0.0431d0         ! air resistence
      
 c     initialize the intial projectile quantities
       x(0) = 0.0d0              ! positions
@@ -47,8 +48,8 @@ c     increate step counter
          time(n_step) = time(n_step-1) + dt
 
 c     perform timestep - update positions and velocities
-         u(n_step) = u(n_step-1)
-         v(n_step) = v(n_step-1) + gravity*dt 
+         u(n_step) = u(n_step-1)                - k*u(n_step-1)/m*dt
+         v(n_step) = v(n_step-1) + gravity*dt   - k*v(n_step-1)/m*dt
          x(n_step) = x(n_step-1) + u(n_step)*dt
          y(n_step) = y(n_step-1) + v(n_step)*dt
 

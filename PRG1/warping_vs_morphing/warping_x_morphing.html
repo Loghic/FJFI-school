@@ -31,14 +31,17 @@
 
         <div class="image-container">
             <div class="square">
+                <div class="grid-overlay"></div>  <!-- Grid overlay -->
                 <img id="preview" src="#" alt="Image Preview" />
             </div>
             <div class="arrows">
                 <button id="warpBtn" class="btn btn-success">Warp Image</button>
                 <span class="arrow">⇒</span>
             </div>
-            <div class="square" style="background-color: #f8f9fa;"></div> <!-- Empty square -->
-        </div>
+            <div class="square" style="background-color: #f8f9fa;">
+                <div class="grid-overlay"></div>
+            </div>
+        </div>        
 
         <!-- Coordinate list and reset button centered -->
         <div id="coordinateList">
@@ -55,45 +58,54 @@
     <cell>
         <h3 id="references">References</h3>
     </cell>
-
+    
     <script>
         document.getElementById('imageUpload').addEventListener('change', function () {
             let file = this.files[0];
             let reader = new FileReader();
-    
+        
             reader.onload = function (event) {
                 let base64String = event.target.result;
                 let previewImage = document.getElementById('preview');
                 
                 previewImage.src = base64String;
                 previewImage.style.display = 'block';
-    
-                // Clear previous coordinates when a new image is uploaded
+        
+                // Clear previous coordinates and points when a new image is uploaded
                 document.getElementById('coordinates').innerHTML = '';
+                document.querySelectorAll('.click-point').forEach(point => point.remove());  // Remove previous points
                 document.getElementById('resetBtn').style.display = 'none';
-    
+        
                 // Add click event listener on the image to capture pixel coordinates
                 previewImage.addEventListener('click', function(e) {
                     let rect = previewImage.getBoundingClientRect();  // Get image position
                     let x = e.clientX - rect.left;  // Calculate x coordinate relative to image
                     let y = e.clientY - rect.top;   // Calculate y coordinate relative to image
-    
+        
                     // Add the clicked coordinates to the list
                     let li = document.createElement('li');
                     li.textContent = 'X: ' + Math.round(x) + ', Y: ' + Math.round(y);
                     document.getElementById('coordinates').appendChild(li);
-    
+        
+                    // Create a point element to mark the clicked position
+                    let point = document.createElement('div');
+                    point.classList.add('click-point');
+                    point.style.left = x + 'px';
+                    point.style.top = y + 'px';
+                    document.querySelector('.square').appendChild(point); // Add point to the image container
+        
                     // Show reset button after first click
                     document.getElementById('resetBtn').style.display = 'block';
                 });
             };
-    
+        
             reader.readAsDataURL(file);
         });
-    
+        
         // Reset button functionality
         document.getElementById('resetBtn').addEventListener('click', function () {
             document.getElementById('coordinates').innerHTML = ''; // Clear the coordinates list
+            document.querySelectorAll('.click-point').forEach(point => point.remove());  // Remove all points
             document.getElementById('resetBtn').style.display = 'none'; // Hide the reset button
         });
     </script>

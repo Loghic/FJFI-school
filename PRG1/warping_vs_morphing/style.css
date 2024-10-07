@@ -48,10 +48,11 @@ label[for="imageUpload"] {
 
 /* Ensure the image fully fills the square */
 #preview {
-    display: none;
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
+    display: none;           /* Initially hidden */
+    width: 100%;             /* Stretch to fill the full width */
+    height: 100%;            /* Stretch to fill the full height */
+    object-fit: fill;        /* Scale the image to completely fill the square, deforming it if necessary */
+    position: absolute;      /* For grid overlay */
 }
 
 /* Square container */
@@ -64,7 +65,23 @@ label[for="imageUpload"] {
     justify-content: center;
     margin: 0 20px;
     overflow: hidden;
-    background-color: red;
+    background-color: white;
+    position: relative;  /* Needed for absolute positioning of the points */
+}
+
+/* Grid overlay */
+.grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;     /* Make sure grid doesn't interfere with clicks */
+    background-image: 
+        linear-gradient(to right, lightgrey 1px, transparent 1px),
+        linear-gradient(to bottom, lightgrey 1px, transparent 1px);
+    background-size: 10px 10px;  /* Spacing of the grid every 20px */
+    z-index: 1;   /* Ensure grid is on top of the image */
 }
 
 /* Flexbox container to align squares and arrows horizontally */
@@ -90,6 +107,18 @@ label[for="imageUpload"] {
 #warpBtn {
     margin-top: 20px;
 }
+
+/* Style for the small point that marks where the image was clicked */
+.click-point {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: red;  /* Color for the point */
+    border-radius: 50%;     /* Make it a circle */
+    transform: translate(-50%, -50%);  /* Center the point at the click */
+    pointer-events: none;   /* Ensure the point itself is not clickable */
+}
+
 
 /* Media query for smaller screens */
 @media (max-width: 768px) {

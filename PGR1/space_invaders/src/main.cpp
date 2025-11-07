@@ -128,16 +128,16 @@ int main(int argc, char* argv[]) {
     lastTime = currentTime;
 
     // Give delta time minumum value, else it might be 0, breaks the physics
-    if (deltaTime <= 0.0001f){
-      deltaTime = 0.0001f;
-    }
+    // if (deltaTime <= 0.001f){
+    //   deltaTime = 0.001f;
+    // }
     // Cap delta time to prevent physics issues on lag spikes
-    if (deltaTime > 0.05f) {
+    if (deltaTime >= 0.0f) {
       deltaTime = 0.05f;
     }
 
-    // const float slowFactor = 0.5f;
-    // deltaTime *= slowFactor;
+     const float slowFactor = 0.5f;
+     deltaTime *= slowFactor;
 
     // Update and render
     game.update(deltaTime);

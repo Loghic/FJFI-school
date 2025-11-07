@@ -1,0 +1,11 @@
+[package]
+name = "astar_desktop"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+astar_core = { path = "../astar_core/" }
+eframe = "0.33"
+egui = "0.33"
+egui_extras = "0.33"
+

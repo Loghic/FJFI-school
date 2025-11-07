@@ -1,0 +1,3 @@
+[workspace]
+resolver = "3"
+members = ["astar_core","astar_desktop","astar_web"]

@@ -2,6 +2,12 @@ mod mazes;
 use mazes::*;
 use eframe::egui;
 
+#[cfg(not(target_arch = "wasm32"))]
+use std::fs::File;
+
+#[cfg(not(target_arch = "wasm32"))]
+use std::io::Write;
+
 
 #[cfg(not(target_arch = "wasm32"))]
 use rfd::FileDialog;
@@ -68,17 +74,25 @@ enum PickMode {
     PickingEnd,
 }
 
-#[derive(PartialEq)]
+#[derive(Clone, Copy, Default)]
+struct Point {
+    x: u32,
+    y: u32,
+}
+
+#[derive(Default, PartialEq)]
 enum Algorithm {
+    #[default]
     AStar,
     BFS,
     DFS,
 }
 
-impl Default for Algorithm {
-    fn default() -> Self {
-        Algorithm::AStar
-    }
+#[derive(PartialEq)]
+enum EditMode {
+    None,
+    DrawWall,
+    EraseWall,
 }
 
 struct MyApp {
@@ -87,19 +101,20 @@ struct MyApp {
     rows: usize,
     cols: usize,
     cell_size: f32,
+    target_cell_size: f32,
     last_canvas_size: egui::Vec2,
+    auto_fit: bool,
+
+    edit_mode: EditMode,
 
     // For opening files desktop
     #[cfg(not(target_arch = "wasm32"))]
     selected_file: Option<String>,
-    #[cfg(not(target_arch = "wasm32"))]
     file_contents: Option<String>,
 
     // Right panel
-    start_x: u32,
-    start_y: u32,
-    end_x: u32,
-    end_y: u32,
+    start: Point,
+    end: Point,
     selected_algorithm: Algorithm,
     speed_ms: u32,
     solve_clicked: bool,
@@ -116,18 +131,20 @@ impl Default for MyApp {
         Self {
             #[cfg(not(target_arch = "wasm32"))]
             selected_file: None,
-            #[cfg(not(target_arch = "wasm32"))]
             file_contents: None,
+
             rows,
             cols,
             maze: maze_starting(),
             selected_maze: "Starting".to_owned(),
             cell_size: 30.0,
+            target_cell_size: 30.0,
             last_canvas_size: egui::vec2(800.0, 600.0),
-            start_x: 1,
-            start_y: 1,
-            end_x: 5,
-            end_y: 5,
+            auto_fit: true,
+            edit_mode: EditMode::None,
+
+            start:Point { x: 1, y: 1},
+            end: Point { x: 5, y: 5},
             selected_algorithm: Algorithm::AStar,
             speed_ms: 100,
             solve_clicked: false,
@@ -144,17 +161,195 @@ impl MyApp {
         if let Some(path) = FileDialog::new()
             .add_filter("Text", &["txt"])
             .add_filter("PBM image", &["pbm"])
-            .add_filter("Images", &["png", "jpeg", "jpg"])
-            .set_directory(".")
+            //   .add_filter("Images", &["png", "jpeg", "jpg"])
+            .set_directory("assets")
             .pick_file()
         {
             self.selected_file = Some(path.display().to_string());
+            let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("").to_lowercase();
 
-            // Try reading file if it's text
-            if let Ok(content) = std::fs::read_to_string(&path) {
-                self.file_contents = Some(content);
-            } else {
-                self.file_contents = Some("<binary or unreadable file>".into());
+            match ext.as_str() {
+                "pbm" => match mazes::maze_from_pbm(&path.display().to_string()) {
+                    Ok(maze) => {
+                        self.rows = maze.len();
+                        self.cols = maze[0].len();
+                        self.maze = maze;
+                        self.auto_fit_to_window(self.last_canvas_size);
+                    }
+                    Err(err) => {
+                        eprintln!("Failed to load PBM: {}", err);
+                        self.file_contents = Some(format!("Error loading PBM: {}", err));
+                    }
+                },
+                "txt" => {
+                    if let Ok(content) = std::fs::read_to_string(&path) {
+                        self.file_contents = Some(content);
+                    } else {
+                        self.file_contents = Some("<undreadable text file>".into());
+                    }
+                }
+                _ => {
+                        self.file_contents = Some("<unsported format>".into());
+                }
+            }
+        }
+    }
+}
+
+impl MyApp {
+    #[cfg(not(target_arch = "wasm32"))]
+    fn save_as_pbm(&self, path: &std::path::Path) -> std::io::Result<()> {
+        let mut file = File::create(path)?;
+
+        // PBM header
+        writeln!(file, "P1")?;
+        writeln!(file, "{} {}", self.cols, self.rows)?;
+
+        // Write each row
+        for row in &self.maze {
+            for cell in row {
+                let bit = match *cell {
+                    Cell::Wall => 1,
+                    _ => 0,
+                };
+                write!(file, "{} ", bit)?;
+            }
+            writeln!(file)?;
+        }
+
+        Ok(())
+    }
+}
+
+impl MyApp {
+    #[cfg(target_arch = "wasm32")]
+    fn open_file_web(&mut self) {
+        use wasm_bindgen::JsCast;
+        use web_sys::{FileReader, HtmlInputElement};
+        use wasm_bindgen::closure::Closure;
+
+        // Create a hidden file input
+        let document = web_sys::window().unwrap().document().unwrap();
+        let input: HtmlInputElement = document
+            .create_element("input")
+            .unwrap()
+            .dyn_into()
+            .unwrap();
+        input.set_type("file");
+
+        // Filter for pbm/txt
+        input.set_accept(".pbm, .txt");
+
+        let app_rc = std::rc::Rc::new(std::cell::RefCell::new(self));
+
+        let closure = Closure::wrap(Box::new(move |event: web_sys::Event| {
+            let input: HtmlInputElement = event.target().unwrap().dyn_into().unwrap();
+
+            if let Some(file_list) = input.files() {
+                if let Some(file) = file_list.get(0) {
+                    let file_clone = file.clone();
+                    let reader = FileReader::new().unwrap();
+                    let reader_rc = std::rc::Rc::new(reader);
+
+                    let app_rc2 = app_rc.clone();
+
+                    // Clone file and reader to move into closure
+                    // let reader_clone = reader.clone();
+
+                    let value = reader_rc.clone();
+                    let onload = Closure::wrap(Box::new(move |_: web_sys::Event| {
+                        let result = value.result().unwrap();
+                        let text = result.as_string().unwrap();
+
+                        let mut app = app_rc2.borrow_mut();
+
+                        // Parse PBM or text
+                        if file_clone.name().ends_with(".pbm") {
+                            match mazes::maze_from_pbm_str(&text) {
+                                Ok(maze) => {
+                                    app.rows = maze.len();
+                                    app.cols = maze[0].len();
+                                    app.maze = maze;
+                                }
+                                Err(err) => web_sys::console::error_1(&err.into()),
+                            }
+                        } else {
+                            app.file_contents = Some(text.into());
+                        }
+                    }) as Box<dyn FnMut(_)>);
+
+                    reader_rc.set_onload(Some(onload.as_ref().unchecked_ref()));
+                    reader_rc.read_as_text(&file).unwrap();
+                    onload.forget();
+                }
+            }
+    }) as Box<dyn FnMut(_)>);
+
+    input.set_onchange(Some(closure.as_ref().unchecked_ref()));
+    document.body().unwrap().append_child(&input).unwrap();
+    input.click();
+    closure.forget();
+    }
+}
+
+impl MyApp {
+    #[cfg(target_arch = "wasm32")]
+    fn save_as_pbm_web(&self) {
+        use wasm_bindgen::JsCast;
+        use web_sys::{Blob, Url, HtmlAnchorElement};
+
+        // Convert maze to PBM string
+        let mut pbm = format!("P1\n{} {}\n", self.cols, self.rows);
+        for row in &self.maze {
+            for cell in row {
+                let bit = match *cell {
+                    Cell::Wall => 1,
+                    _ => 0,
+                };
+                pbm.push_str(&format!("{} ", bit));
+            }
+            pbm.push('\n');
+        }
+
+        let array = js_sys::Array::new();
+        array.push(&wasm_bindgen::JsValue::from_str(&pbm));
+
+        let blob = Blob::new_with_str_sequence(&array).unwrap();
+        let url = Url::create_object_url_with_blob(&blob).unwrap();
+
+        let document = web_sys::window().unwrap().document().unwrap();
+        let a = document
+            .create_element("a")
+            .unwrap()
+            .dyn_into::<HtmlAnchorElement>()
+            .unwrap();
+        a.set_href(&url);
+        a.set_download("maze.pbm");
+        a.click();
+
+        Url::revoke_object_url(&url).unwrap();
+    }
+}
+
+
+impl MyApp {
+    fn auto_fit_to_window(& mut self, available: egui::Vec2) {
+        if self.auto_fit {
+            let new_size_x = available.x / self.cols as f32;
+            let new_size_y = available.y / self.rows as f32;
+            self.target_cell_size = new_size_x.min(new_size_y).clamp(5.0, 100.0);
+        }
+    }
+}
+
+impl MyApp {
+    fn invert_maze(&mut self) {
+        for row in &mut self.maze {
+            for cell in row {
+                *cell = match * cell {
+                    Cell::Wall => Cell::Empty,
+                    Cell::Empty => Cell::Wall,
+                };
             }
         }
     }
@@ -169,13 +364,37 @@ impl eframe::App for MyApp {
                 let is_web = cfg!(target_arch = "wasm32");
                 ui.menu_button("File", |ui|{
                     if !is_web {
-                        if ui.button("Quit").clicked() {
-                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                        // Desktop only
+                        #[cfg(not(target_arch = "wasm32"))]
+                        {
+                            if ui.button("Quit").clicked() {
+                                ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                            }
+                            ui.add_space(16.0);
+                            if ui.button("Open File").clicked() {
+                                self.open_file();
+                            }
+
+                            if ui.button("Save File").clicked()
+                               &&  let Some(path) = FileDialog::new()
+                                    .set_directory("assets")
+                                    .add_filter("PBM", &["pbm"])
+                                    .save_file()
+                                 && let Err(err) = self.save_as_pbm(&path) {
+                                        eprintln!("Failed to save PBM: {}", err);
+                            }
                         }
-                        ui.add_space(16.0);
-                        if ui.button("Open File").clicked() {
-                            #[cfg(not(target_arch = "wasm32"))]
-                            self.open_file();
+                    } else {
+                        // Web only
+                        #[cfg(target_arch = "wasm32")]
+                        {
+                            if ui.button("Open File").clicked() {
+                                self.open_file_web();
+                            }
+
+                            if ui.button("Save File").clicked() {
+                                self.save_as_pbm_web();
+                            }
                         }
                     }
                 });
@@ -221,8 +440,8 @@ impl eframe::App for MyApp {
             ui.group(|ui| {
                 ui.label("Start coordinates");
                 ui.horizontal(|ui| {
-                    ui.add(egui::DragValue::new(&mut self.start_x).range(0..=u32::MAX).speed(1));
-                    ui.add(egui::DragValue::new(&mut self.start_y).range(0..=u32::MAX).speed(1));
+                    ui.add(egui::DragValue::new(&mut self.start.x).range(0..=u32::MAX).speed(1));
+                    ui.add(egui::DragValue::new(&mut self.start.y).range(0..=u32::MAX).speed(1));
 
                     let start_button_color = if self.pick_mode == PickMode::PickingStart {
                         active_color
@@ -238,8 +457,8 @@ impl eframe::App for MyApp {
             ui.group(|ui| {
                 ui.label("End coordinates");
                 ui.horizontal(|ui| {
-                    ui.add(egui::DragValue::new(&mut self.end_x).range(0..=u32::MAX).speed(1));
-                    ui.add(egui::DragValue::new(&mut self.end_y).range(0..=u32::MAX).speed(1));
+                    ui.add(egui::DragValue::new(&mut self.end.x).range(0..=u32::MAX).speed(1));
+                    ui.add(egui::DragValue::new(&mut self.end.y).range(0..=u32::MAX).speed(1));
 
                     let end_button_color = if self.pick_mode == PickMode::PickingEnd {
                         active_color
@@ -258,49 +477,174 @@ impl eframe::App for MyApp {
                 ui.add(egui::Slider::new(&mut self.cell_size, 5.0..=100.0).text("px"));
             });
 
-            if ui.button("Fit to window").clicked() {
-                let new_size_x = self.last_canvas_size.x / self.cols as f32;
-                let new_size_y = self.last_canvas_size.y / self.rows as f32;
-                self.cell_size = new_size_x.min(new_size_y).clamp(5.0, 100.0);
-            }
+            ui.group(|ui| {
+                ui.label("Window Fit");
+                ui.horizontal(|ui| {
+                    if ui.button("Fit to window").clicked() {
+                        let new_size_x = self.last_canvas_size.x / self.cols as f32;
+                        let new_size_y = self.last_canvas_size.y / self.rows as f32;
+                        self.cell_size = new_size_x.min(new_size_y).clamp(5.0, 100.0);
+                    }
 
-            // Algorithm dropdown
-            egui::ComboBox::from_label("Algorithm")
-                .selected_text(match self.selected_algorithm {
-                    Algorithm::AStar => "A*",
-                    Algorithm::BFS => "BFS",
-                    Algorithm::DFS => "DFS",
-                })
-                .show_ui(ui, |ui| {
-                    ui.selectable_value(&mut self.selected_algorithm, Algorithm::AStar, "A*");
-                    ui.selectable_value(&mut self.selected_algorithm, Algorithm::BFS, "BFS");
-                    ui.selectable_value(&mut self.selected_algorithm, Algorithm::DFS, "DFS");
+                    ui.checkbox(&mut self.auto_fit, "Auto-fit to window");
                 });
+            });
 
-            // Speed dropdown
-            egui::ComboBox::from_label("Speed (ms)")
-                .selected_text(format!("{}", self.speed_ms))
-                .show_ui(ui, |ui| {
-                    for &speed in &[100, 200, 500, 1000] {
-                        ui.selectable_value(&mut self.speed_ms, speed, format!("{}", speed));
+            ui.group(|ui| {
+                ui.label("Solving options");
+                // Algorithm dropdown
+                egui::ComboBox::from_label("Algorithm")
+                    .selected_text(match self.selected_algorithm {
+                        Algorithm::AStar => "A*",
+                        Algorithm::BFS => "BFS",
+                        Algorithm::DFS => "DFS",
+                    })
+                    .show_ui(ui, |ui| {
+                        ui.selectable_value(&mut self.selected_algorithm, Algorithm::AStar, "A*");
+                        ui.selectable_value(&mut self.selected_algorithm, Algorithm::BFS, "BFS");
+                        ui.selectable_value(&mut self.selected_algorithm, Algorithm::DFS, "DFS");
+                    });
+
+                // Speed dropdown
+                egui::ComboBox::from_label("Speed (ms)")
+                    .selected_text(format!("{}", self.speed_ms))
+                    .show_ui(ui, |ui| {
+                        for &speed in &[100, 200, 500, 1000] {
+                            ui.selectable_value(&mut self.speed_ms, speed, format!("{}", speed));
+                        }
+                    });
+
+            });
+
+            ui.group(|ui| {
+                ui.label("Solve");
+                ui.horizontal(|ui| {
+                    if ui.button("Solve").clicked() {
+                        self.solve_clicked = true;
+                        self.step_clicked = false;
+                    }
+                    if ui.button("Step").clicked() {
+                        self.step_clicked = true;
+                        self.solve_clicked = false;
                     }
                 });
+            });
+
+            ui.separator();
+            ui.heading("Editing");
+
+            let draw_active = self.edit_mode == EditMode::DrawWall;
+            let erase_active = self.edit_mode == EditMode::EraseWall;
 
             ui.horizontal(|ui| {
-                if ui.button("Solve").clicked() {
-                    self.solve_clicked = true;
-                    self.step_clicked = false;
+                let draw_color = if draw_active {
+                    active_color
+                } else {
+                    inactive_color
+                };
+                if ui.add(egui::Button::new("Draw Wall").fill(draw_color)).clicked() {
+                    self.edit_mode = if draw_active { EditMode::None } else { EditMode::DrawWall };
                 }
-                if ui.button("Step").clicked() {
-                    self.step_clicked = true;
-                    self.solve_clicked = false;
+
+                let erase_color = if erase_active {
+                    active_color
+                } else {
+                    inactive_color
+                };
+                if ui.add(egui::Button::new("Erase Wall").fill(erase_color)).clicked() {
+                    self.edit_mode = if erase_active { EditMode::None } else { EditMode::EraseWall } ;
                 }
             });
+
+            ui.separator();
+            ui.horizontal(|ui| {
+                if ui.button("Fill Walls").clicked(){
+                    for row in 0..self.rows {
+                        for col in 0..self.cols {
+                            self.maze[row][col] = Cell::Wall;
+                        }
+                    }
+                }
+
+                if ui.button("Clear Maze").clicked() {
+                    for row in 0..self.rows {
+                        for col in 0..self.cols {
+                            self.maze[row][col] = Cell::Empty;
+                        }
+                    }
+                }
+            });
+
+            ui.separator();
+            ui.horizontal(|ui| {
+                if ui.button("Add Row Walls").clicked() {
+                    self.rows += 1;
+                    let new_row = vec![Cell::Wall; self.cols];
+                    self.maze.push(new_row);
+                    self.auto_fit_to_window(self.last_canvas_size);
+                }
+
+                if ui.button("Add Column Walls").clicked() {
+                    self.cols += 1;
+                    for row in &mut self.maze {
+                        row.push(Cell::Wall);
+                    }
+                    self.auto_fit_to_window(self.last_canvas_size);
+                }
+            });
+            ui.horizontal(|ui| {
+                if ui.button("Add Empty Row").clicked() {
+                    self.rows += 1;
+                    let new_row = vec![Cell::Empty; self.cols];
+                    self.maze.push(new_row);
+                    self.auto_fit_to_window(self.last_canvas_size);
+                }
+
+                if ui.button("Add Empty Column").clicked() {
+                    self.cols += 1;
+                    for row in &mut self.maze {
+                        row.push(Cell::Empty);
+                    }
+                    self.auto_fit_to_window(self.last_canvas_size);
+                }
+            });
+
+            ui.horizontal(|ui| {
+                if ui.button("Remove Row").clicked() && self.rows > 1 {
+                    self.rows -= 1;
+                    self.maze.pop();
+                    self.auto_fit_to_window(self.last_canvas_size);
+                }
+
+                if ui.button("Remove Column").clicked() && self.cols > 1 {
+                    self.cols -= 1;
+                    for row in &mut self.maze {
+                        row.pop();
+                    }
+                    self.auto_fit_to_window(self.last_canvas_size);
+                }
+            });
+
+            ui.separator();
+            if ui.button("Invert Maze").clicked() {
+                self.invert_maze();
+            }
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
             let available = ui.available_size();
+
+            // Auto-fit logic
+            if self.auto_fit && available != self.last_canvas_size {
+                let new_size_x = available.x / self.cols as f32;
+                let new_size_y = available.y / self.rows as f32;
+                self.target_cell_size= new_size_x.min(new_size_y).clamp(5.0, 100.0);
+            }
             self.last_canvas_size = available;
+
+            // Smooth transition
+            // Might delete later; todo so: change target_cell_size -> cell_size
+            self.cell_size = egui::lerp(self.cell_size..=self.target_cell_size, 0.3);
 
             // Compute maze pixel size
             let maze_width = self.cols as f32 * self.cell_size;
@@ -313,12 +657,32 @@ impl eframe::App for MyApp {
             // Start drawing from the top-left corner of the available region
             let origin = ui.min_rect().min + egui::vec2(offset_x, offset_y);
 
+            // Maze size
             let maze_rect = egui::Rect::from_min_size(origin, egui::vec2(maze_width, maze_height));
 
-            let response = ui.allocate_rect(maze_rect, egui::Sense::click());
+            // Handle maze clicks
+            let response = ui.allocate_rect(maze_rect, egui::Sense::click_and_drag());
 
             // Painter the canvas
             let painter = ui.painter_at(maze_rect);
+
+            // Handle mouse click for wall editing
+            if let Some(pos) = response.interact_pointer_pos() && maze_rect.contains(pos) {
+                let col = ((pos.x - origin.x) / self.cell_size).floor() as usize;
+                let row = ((pos.y - origin.y) / self.cell_size).floor() as usize;
+
+                if row < self.rows && col < self.cols {
+                    match self.edit_mode {
+                        EditMode::DrawWall => {
+                            self.maze[row][col] = Cell::Wall;
+                        }
+                        EditMode::EraseWall => {
+                            self.maze[row][col] = Cell::Empty;
+                        }
+                        _ => {}
+                    }
+                }
+            }
 
             for row in 0..self.rows {
                 for col in 0..self.cols {
@@ -330,9 +694,9 @@ impl eframe::App for MyApp {
                     );
 
                     // Determine color based on coordinates
-                    let color = if row as u32 == self.start_y && col as u32 == self.start_x {
+                    let color = if row as u32 == self.start.y && col as u32 == self.start.x {
                         egui::Color32::BLUE
-                    } else if row as u32 == self.end_y && col as u32 == self.end_x {
+                    } else if row as u32 == self.end.y && col as u32 == self.end.x {
                         egui::Color32::RED
                     } else {
                         match self.maze[row][col] {
@@ -348,25 +712,25 @@ impl eframe::App for MyApp {
                 }
             }
 
-            // Hanlde picking start/end with mouse
-            if let Some(pos) = response.interact_pointer_pos() {
-                if response.clicked() && maze_rect.contains(pos) {
-                    let col = ((pos.x - origin.x) / self.cell_size).floor() as u32;
-                    let row = ((pos.y - origin.y) / self.cell_size).floor() as u32;
+            // Handle picking start/end with mouse
+            if let Some(pos) = response.interact_pointer_pos()  && response.clicked()
+                    && maze_rect.contains(pos) {
 
-                    match self.pick_mode {
-                        PickMode::PickingStart => {
-                            self.start_x = col;
-                            self.start_y = row;
-                            self.pick_mode = PickMode::None;
-                        }
-                        PickMode::PickingEnd => {
-                            self.end_x = col;
-                            self.end_y = row;
-                            self.pick_mode = PickMode::None;
-                        }
-                        PickMode::None => {}
+                let col = ((pos.x - origin.x) / self.cell_size).floor() as u32;
+                let row = ((pos.y - origin.y) / self.cell_size).floor() as u32;
+
+                match self.pick_mode {
+                    PickMode::PickingStart => {
+                        self.start.x = col;
+                        self.start.y = row;
+                        self.pick_mode = PickMode::None;
                     }
+                    PickMode::PickingEnd => {
+                        self.end.x = col;
+                        self.end.y = row;
+                        self.pick_mode = PickMode::None;
+                    }
+                    PickMode::None => {}
                 }
             }
         });

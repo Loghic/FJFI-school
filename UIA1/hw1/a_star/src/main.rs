@@ -1,5 +1,8 @@
 mod mazes;
 use mazes::*;
+mod a_star;
+use a_star::*;
+
 use eframe::egui;
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -7,7 +10,6 @@ use std::fs::File;
 
 #[cfg(not(target_arch = "wasm32"))]
 use std::io::Write;
-
 
 #[cfg(not(target_arch = "wasm32"))]
 use rfd::FileDialog;
@@ -76,16 +78,8 @@ enum PickMode {
 
 #[derive(Clone, Copy, Default)]
 struct Point {
-    x: u32,
-    y: u32,
-}
-
-#[derive(Default, PartialEq)]
-enum Algorithm {
-    #[default]
-    AStar,
-    BFS,
-    DFS,
+    x: usize,
+    y: usize,
 }
 
 #[derive(PartialEq)]
@@ -117,10 +111,16 @@ struct MyApp {
     end: Point,
     selected_algorithm: Algorithm,
     speed_ms: u32,
+    last_step_time: std::time::Instant,
+    show_path_after_finish: bool,
+    last_finish_time: Option<std::time::Instant>,
     solve_clicked: bool,
     step_clicked: bool,
+    solving_loop: bool,
 
     pick_mode: PickMode,
+
+    solver: Option<Solver>,
 }
 
 impl Default for MyApp {
@@ -147,10 +147,16 @@ impl Default for MyApp {
             end: Point { x: 5, y: 5},
             selected_algorithm: Algorithm::AStar,
             speed_ms: 100,
+            last_step_time: std::time::Instant::now(),
+            last_finish_time: None,
+            show_path_after_finish: false,
             solve_clicked: false,
             step_clicked: false,
+            solving_loop: false,
 
             pick_mode: PickMode::None,
+
+            solver: None,
         }
     }
 }
@@ -509,7 +515,7 @@ impl eframe::App for MyApp {
                 egui::ComboBox::from_label("Speed (ms)")
                     .selected_text(format!("{}", self.speed_ms))
                     .show_ui(ui, |ui| {
-                        for &speed in &[100, 200, 500, 1000] {
+                        for &speed in &[10, 20, 50, 100, 200, 500, 1000] {
                             ui.selectable_value(&mut self.speed_ms, speed, format!("{}", speed));
                         }
                     });
@@ -520,15 +526,90 @@ impl eframe::App for MyApp {
                 ui.label("Solve");
                 ui.horizontal(|ui| {
                     if ui.button("Solve").clicked() {
-                        self.solve_clicked = true;
-                        self.step_clicked = false;
-                    }
+                    self.solve_clicked = true;
+                    self.step_clicked = false;
+                    self.solver = Some(Solver::new(
+                        self.selected_algorithm.clone(),
+                        (self.start.x, self.start.y),
+                        (self.end.x, self.end.y),
+                    ));}
+
                     if ui.button("Step").clicked() {
+                        if self.solver.is_none() {
+                            self.solver = Some(Solver::new(
+                                self.selected_algorithm.clone(),
+                                (self.start.x, self.start.y),
+                                (self.end.x, self.end.y),
+                            ));
+                        }
                         self.step_clicked = true;
-                        self.solve_clicked = false;
                     }
+
+                    ui.checkbox(&mut self.solving_loop, "Solving loop");
+
+                    if self.show_path_after_finish && ui.button("Clear Path").clicked() {
+                        self.solver = None;
+                        self.show_path_after_finish = false;
+                    }
+
                 });
             });
+
+            if self.solving_loop {
+                let should_restart = match &self.solver {
+                    None => true,
+                    Some(solver) => solver.finished,
+                };
+
+                if should_restart {
+                    let ready_to_restart = match self.last_finish_time {
+                        Some(t) => t.elapsed().as_millis() >= 500, // 500 ms delay
+                        None => true,
+                    };
+
+                    if ready_to_restart {
+                        self.solver = Some(Solver::new(
+                            self.selected_algorithm.clone(),
+                            (self.start.x, self.start.y),
+                            (self.end.x, self.end.y),
+                        ));
+                        self.last_finish_time = None; // reset timer
+                    }
+                } else {
+                    self.last_finish_time = None; // reset if running normally
+                }
+            }
+
+
+            if let Some(solver) = &mut self.solver {
+                if (self.solve_clicked || self.solving_loop) && !solver.finished {
+                    let now = std::time::Instant::now();
+                    if now.duration_since(self.last_step_time).as_millis() >= self.speed_ms as u128 {
+                        match solver.algorithm {
+                            Algorithm::BFS => solver.step_bfs_layer(&self.maze),
+                            _ => solver.step(&self.maze),
+                        }
+                        self.last_step_time = now;
+                    }
+
+                    ctx.request_repaint();
+                } else if self.step_clicked {
+                    solver.step(&self.maze);
+                    self.step_clicked = false; // reset
+                }
+
+                if solver.finished {
+                    self.solve_clicked = false;
+                    self.step_clicked = false;
+                    self.show_path_after_finish = true;
+
+                    if self.last_finish_time.is_none() {
+                        self.last_finish_time = Some(std::time::Instant::now());
+                    }
+
+                    ctx.request_repaint();
+                }
+            }
 
             ui.separator();
             ui.heading("Editing");
@@ -694,9 +775,9 @@ impl eframe::App for MyApp {
                     );
 
                     // Determine color based on coordinates
-                    let color = if row as u32 == self.start.y && col as u32 == self.start.x {
+                    let color = if row as usize == self.start.y && col as usize == self.start.x {
                         egui::Color32::BLUE
-                    } else if row as u32 == self.end.y && col as u32 == self.end.x {
+                    } else if row as usize == self.end.y && col as usize == self.end.x {
                         egui::Color32::RED
                     } else {
                         match self.maze[row][col] {
@@ -709,6 +790,43 @@ impl eframe::App for MyApp {
 
                     // Grid lines
                     painter.rect_stroke(cell_rect, 0.0, (1.0, egui::Color32::GRAY), egui::StrokeKind::Outside);
+
+                }
+            }
+
+            if let Some(solver) = &self.solver {
+                // Exporation sets
+                for &(col, row) in &solver.closed {
+                    let center = egui::pos2 (
+                        origin.x + (col as f32 + 0.5) * self.cell_size,
+                        origin.y + (row as f32 + 0.5) * self.cell_size,
+                    );
+                    let radius = self.cell_size * 0.15;
+                    painter.circle_filled(center, radius, egui::Color32::GRAY);
+                }
+
+                for &(col, row) in &solver.open {
+                    let center = egui::pos2 (
+                        origin.x + (col as f32 + 0.5) * self.cell_size,
+                        origin.y + (row as f32 + 0.5) * self.cell_size,
+                    );
+                    let radius = self.cell_size * 0.15;
+                    painter.circle_filled(center, radius, egui::Color32::ORANGE);
+                }
+
+                if solver.path.len() > 1 {
+                    let points: Vec<egui::Pos2> = solver.path.iter()
+                        .map(|&(col, row)| {
+                            egui::pos2(
+                                origin.x + (col as f32 + 0.5) * self.cell_size,
+                                origin.y + (row as f32 + 0.5) * self.cell_size,
+                            )
+                        })
+                        .collect();
+
+                    painter.add(egui::Shape::line(points,
+                        egui::Stroke::new(3.0, egui::Color32::GREEN),
+                    ));
                 }
             }
 
@@ -716,8 +834,8 @@ impl eframe::App for MyApp {
             if let Some(pos) = response.interact_pointer_pos()  && response.clicked()
                     && maze_rect.contains(pos) {
 
-                let col = ((pos.x - origin.x) / self.cell_size).floor() as u32;
-                let row = ((pos.y - origin.y) / self.cell_size).floor() as u32;
+                let col = ((pos.x - origin.x) / self.cell_size).floor() as usize;
+                let row = ((pos.y - origin.y) / self.cell_size).floor() as usize;
 
                 match self.pick_mode {
                     PickMode::PickingStart => {

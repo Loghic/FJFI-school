@@ -1,0 +1,28 @@
+@startuml sequence-indicators
+title Indicator Visualization Sequence
+
+actor User
+participant "Browser" as Browser
+participant "IndexModel" as Page
+participant "TechnicalIndicators" as TI
+database "SQLite" as DB
+
+User -> Browser : Navigate to Dashboard
+Browser -> Page : GET /Index
+
+loop For each stock symbol
+  Page -> DB : Get price data
+  DB --> Page : PricePoints
+  Page -> TI : Calculate SMA, EMA, RSI, BB, MACD
+  TI --> Page : Indicator values
+end
+
+Page --> Browser : HTML + JSON data
+Browser -> Browser : Init Chart.js
+Browser --> User : Display chart
+
+User -> Browser : Toggle indicator checkbox
+Browser -> Browser : Rebuild datasets
+Browser -> Browser : chart.update()
+Browser --> User : Updated visualization
+@enduml

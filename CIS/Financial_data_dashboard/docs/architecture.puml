@@ -10,10 +10,12 @@ package "Presentation Layer" {
 }
 
 package "Application Layer" {
+  interface "IStockService" as IStockSvc
   [StockService\n(API Client)] as StockSvc
   [StockDataService\n(Scoped)] as DataSvc
   [PredictionService\n(Singleton)] as PredSvc
   [TechnicalIndicators\n(Static Helper)] as Indicators
+  [CsvExporter\n(Static Helper)] as CsvExp
 }
 
 package "Data Access Layer" {
@@ -35,8 +37,10 @@ Pages --> Charts : Renders
 Pages --> DataSvc : Inject
 Pages --> PredSvc : Inject
 Pages --> Indicators : Calculate
+Pages --> CsvExp : Export CSV
 
-DataSvc --> StockSvc : Fetch API
+StockSvc ..|> IStockSvc : implements
+DataSvc --> IStockSvc : Inject interface
 DataSvc --> DbContext : Query/Save
 StockSvc --> API : HTTP GET
 
@@ -51,5 +55,10 @@ note right of PredSvc
   ConcurrentDictionary for
   async prediction results
 end note
-@enduml
 
+note right of IStockSvc
+  Interface enables
+  mocking in unit tests
+end note
+
+@enduml

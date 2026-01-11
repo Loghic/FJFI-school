@@ -32,19 +32,19 @@ The application is structured into clearly separated layers:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                   Presentation Layer                     │
+│                   Presentation Layer                    │
 │              (Razor Pages, Chart.js, DataTables)        │
 ├─────────────────────────────────────────────────────────┤
-│                  Application Services                    │
+│                  Application Services                   │
 │  ┌─────────────┐ ┌─────────────────┐ ┌───────────────┐  │
 │  │StockService │ │StockDataService │ │PredictionSvc  │  │
 │  │  (API)      │ │  (Orchestrator) │ │  (Singleton)  │  │
 │  └─────────────┘ └─────────────────┘ └───────────────┘  │
 ├─────────────────────────────────────────────────────────┤
-│                   Data Access Layer                      │
+│                   Data Access Layer                     │
 │         StockContext (Entity Framework Core)            │
 ├─────────────────────────────────────────────────────────┤
-│                    SQLite Database                       │
+│                    SQLite Database                      │
 │              (Stocks, PricePoints tables)               │
 └─────────────────────────────────────────────────────────┘
           │                                    │
@@ -86,6 +86,7 @@ MarketDataDashboard/
 │   ├── Indicators.cshtml        # Indicator explanations page
 │   └── Indicators.cshtml.cs     # Indicator info dictionary
 ├── Services/
+│   ├── IStockService.cs         # Stock service interface
 │   ├── StockService.cs          # Alpha Vantage API client
 │   ├── StockDataService.cs      # Data orchestration (API + DB)
 │   └── PredictionService.cs     # Python script integration
@@ -94,6 +95,12 @@ MarketDataDashboard/
 │   └── venv/                    # Python virtual environment
 ├── Program.cs                   # DI configuration, middleware
 └── appsettings.json             # Configuration (API key)
+
+MarketDataDashboard.Tests/
+├── TechnicalIndicatorsTests.cs  # SMA, EMA, RSI, BB, MACD tests
+├── CsvExporterTests.cs          # CSV export tests
+├── StockDataServiceTests.cs     # Data service tests with mocking
+└── PredictionServiceTests.cs    # Prediction workflow tests
 ```
 
 ---
@@ -102,7 +109,7 @@ MarketDataDashboard/
 
 | Category | Technology |
 |----------|------------|
-| Language | C# 12 / .NET 8 |
+| Language | C# 12 / .NET 9 |
 | Web Framework | ASP.NET Core Razor Pages |
 | Database | SQLite with Entity Framework Core |
 | Data Visualization | Chart.js with zoom plugin |
@@ -113,6 +120,44 @@ MarketDataDashboard/
 | Analytics | Python 3 (NumPy, scikit-learn) |
 | Content Rendering | Markdig (Markdown to HTML) |
 | Data Exchange | JSON (System.Text.Json) |
+| Testing | xUnit, Moq, EF Core InMemory |
+
+---
+
+## Testing
+
+The project includes a comprehensive test suite with **33 unit tests** covering core functionality.
+
+### Run Tests
+
+```bash
+cd src/MarketDataDashboard.Tests
+dotnet test
+```
+
+### Test Coverage
+
+| Component | Tests | Description |
+|-----------|-------|-------------|
+| **TechnicalIndicators** | 15 | SMA, EMA, RSI, Bollinger Bands, MACD calculations |
+| **CsvExporter** | 5 | CSV formatting, headers, culture handling |
+| **StockDataService** | 7 | Database operations, incremental updates, case sensitivity |
+| **PredictionService** | 6 | Future date generation, business day logic, state management |
+
+### Testing Approach
+
+- **Unit Tests**: Pure function testing for technical indicators and helpers
+- **Mocking**: `IStockService` interface mocked with Moq for isolated service testing
+- **In-Memory Database**: EF Core InMemory provider for database operation tests
+- **Edge Cases**: Empty data, boundary conditions, weekend handling
+
+### Test Technologies
+
+| Package | Purpose |
+|---------|---------|
+| xUnit | Test framework |
+| Moq | Mocking framework |
+| Microsoft.EntityFrameworkCore.InMemory | In-memory database for tests |
 
 ---
 
@@ -180,8 +225,9 @@ User clicks "Generate Prediction"
 ## Setup & Running
 
 ### Requirements
-- .NET 8 SDK
+- .NET 9 SDK
 - Internet connection (for Alpha Vantage API)
+- Alpha Vantage API key (free at https://www.alphavantage.co/support/#api-key)
 - Python 3.x with virtual environment (optional, for predictions)
 
 ### Steps
@@ -222,7 +268,7 @@ User clicks "Generate Prediction"
 ### Enable Predictions (Optional)
 
 ```bash
-cd bin/Release/net8.0/python
+cd bin/Release/net9.0/python
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install numpy scikit-learn
@@ -262,6 +308,7 @@ pip install numpy scikit-learn
 - [ ] Server-side indicator caching
 - [ ] User authentication and watchlists
 - [ ] Docker containerization
+- [ ] CI/CD pipeline with GitHub Actions
 
 ---
 

@@ -14,7 +14,7 @@ var alphaVantageKey = builder.Configuration["AlphaVantage:ApiKey"]
 builder.Services.AddRazorPages();
 
 // Register HttpClient and StockService with API key and User-Agent
-builder.Services.AddHttpClient<StockService>(client =>
+builder.Services.AddHttpClient<IStockService, StockService>(client =>
 {
     client.DefaultRequestHeaders.UserAgent.ParseAdd(
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +

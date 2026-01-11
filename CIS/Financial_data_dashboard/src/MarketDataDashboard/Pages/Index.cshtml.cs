@@ -112,7 +112,7 @@ namespace MarketDataDashboard.Pages
       );
     }
 
-    public async Task<IActionResult> OnPostPredictAsync(string symbol)
+    public Task<IActionResult> OnPostPredictAsync(string symbol)
     {
         // Start prediction in background
       _predictionService.StartPrediction(symbol);
@@ -123,7 +123,7 @@ namespace MarketDataDashboard.Pages
           StocksPrediction[symbol] = new List<decimal?>();
 
       // Immediately return to page, do not wait
-      return RedirectToPage(new { symbol });
+      return Task.FromResult<IActionResult>(RedirectToPage(new { symbol }));
     }
 
     public IActionResult OnGetPredictionResult(string symbol)

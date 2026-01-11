@@ -4,7 +4,7 @@ using MarketDataDashboard.Models;
 
 namespace MarketDataDashboard.Services
 {
-  public class StockService
+  public class StockService : IStockService
   {
     private readonly HttpClient _http;
     private readonly string _apiKey;

@@ -6,10 +6,10 @@ namespace MarketDataDashboard.Services
 {
     public class StockDataService
     {
-        private readonly StockService _api;
+        private readonly IStockService _api;  // Changed from StockService to IStockService
         private readonly StockContext _db;
 
-        public StockDataService(StockService api, StockContext db)
+        public StockDataService(IStockService api, StockContext db)  // Changed parameter type
         {
             _api = api;
             _db = db;
@@ -21,7 +21,6 @@ namespace MarketDataDashboard.Services
             if (!apiPoints.Any())
                 return;
 
-            // Ensure Stock exists
             var stock = await _db.Stocks
                 .FirstOrDefaultAsync(s => s.Symbol == symbol);
 
@@ -29,8 +28,8 @@ namespace MarketDataDashboard.Services
             {
                 stock = new Stock
                 {
-                  Symbol = symbol,
-                  Name = $"{symbol} (Alpha Vantage)"
+                    Symbol = symbol,
+                    Name = $"{symbol} (Alpha Vantage)"
                 };
                 _db.Stocks.Add(stock);
                 await _db.SaveChangesAsync();
@@ -45,13 +44,13 @@ namespace MarketDataDashboard.Services
                 .Where(p => !existingDates.Contains(p.Date))
                 .Select(p => new PricePoint
                 {
-                  Date = p.Date,
-                  Open = p.Open,
-                  High = p.High,
-                  Low = p.Low,
-                  Close = p.Close,
-                  Volume = p.Volume,
-                  StockId = stock.Id
+                    Date = p.Date,
+                    Open = p.Open,
+                    High = p.High,
+                    Low = p.Low,
+                    Close = p.Close,
+                    Volume = p.Volume,
+                    StockId = stock.Id
                 })
                 .ToList();
 
@@ -64,13 +63,11 @@ namespace MarketDataDashboard.Services
 
         public async Task<List<PricePoint>> GetFromDatabaseAsync(string symbol)
         {
-          symbol = symbol.Trim().ToUpper();
-
-          return await _db.PricePoints
-              .Where(p => p.Stock != null && p.Stock.Symbol.ToUpper() == symbol)
-              .OrderBy(p => p.Date)
-              .ToListAsync();
+            symbol = symbol.Trim().ToUpper();
+            return await _db.PricePoints
+                .Where(p => p.Stock != null && p.Stock.Symbol.ToUpper() == symbol)
+                .OrderBy(p => p.Date)
+                .ToListAsync();
         }
     }
 }
-

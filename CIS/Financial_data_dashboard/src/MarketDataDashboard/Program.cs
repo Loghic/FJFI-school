@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
 // Read API key from configuration
 var alphaVantageKey = builder.Configuration["AlphaVantage:ApiKey"]
                       ?? throw new InvalidOperationException("Alpha Vantage API key is missing");

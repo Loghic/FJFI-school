@@ -192,7 +192,18 @@ User clicks "Generate Prediction"
    cd MarketDataDashboard
    ```
 
-2. **Configure API key** in `appsettings.json`:
+2. **Configure API key** using .NET User Secrets:
+   ```bash
+   # Initialize user secrets (only needed once)
+   dotnet user-secrets init
+
+   # Set your Alpha Vantage API key
+   dotnet user-secrets set "AlphaVantage:ApiKey" "YOUR_API_KEY"
+   ```
+
+   > **Note**: User secrets are stored securely outside the project folder and are not committed to git. This is the recommended approach for development.
+
+   **Alternative**: Create `appsettings.Local.json` (gitignored):
    ```json
    {
      "AlphaVantage": {

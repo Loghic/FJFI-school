@@ -1,5 +1,7 @@
 # Market Data Dashboard
 
+![.NET Build & Test](https://github.com/Loghic/FJFI-school/actions/workflows/dotnet.yml/badge.svg)
+
 **Market Data Dashboard** is a **web application** built in **C# (ASP.NET Core)** that allows users to download, store, visualize, and analyze historical stock market data.
 The application demonstrates real-world software engineering practices such as asynchronous data processing, local data persistence, external service integration, modular analytics, and clean architectural separation.
 
@@ -121,6 +123,7 @@ MarketDataDashboard.Tests/
 | Content Rendering | Markdig (Markdown to HTML) |
 | Data Exchange | JSON (System.Text.Json) |
 | Testing | xUnit, Moq, EF Core InMemory |
+| CI/CD | GitHub Actions |
 
 ---
 
@@ -128,7 +131,11 @@ MarketDataDashboard.Tests/
 
 The project includes a comprehensive test suite with **33 unit tests** covering core functionality.
 
-### Run Tests
+### CI/CD
+
+Tests run automatically on every push and pull request via **GitHub Actions**.
+
+### Run Tests Locally
 
 ```bash
 cd src/MarketDataDashboard.Tests
@@ -308,7 +315,7 @@ pip install numpy scikit-learn
 - [ ] Server-side indicator caching
 - [ ] User authentication and watchlists
 - [ ] Docker containerization
-- [ ] CI/CD pipeline with GitHub Actions
+- [x] CI/CD pipeline with GitHub Actions
 
 ---
 

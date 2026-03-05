@@ -4,37 +4,43 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    // Optional parameter to select lesson/project
-    const lesson = b.option([]const u8, "lesson", "Lesson number") orelse "hodina1";
-    const source_dir = lesson;
-    const project_name = lesson;
+    const lesson = b.option([]const u8, "lesson", "Lesson directory")
+        orelse "hodina1";
 
-    // Create executable (Zig 0.15.x)
+    const source_dir = lesson;
+
+    // Replace "/" with "-" for executable name
+    const project_name = std.mem.replaceOwned(
+        u8,
+        b.allocator,
+        lesson,
+        "/",
+        "-",
+    ) catch unreachable;
+    defer b.allocator.free(project_name);
+
+    // ✅ Zig 0.15.x style executable creation
     const exe = b.addExecutable(.{
         .name = project_name,
-        .root_module = b.addModule("root", .{
+        .root_module = b.createModule(.{
             .target = target,
             .optimize = optimize,
         }),
     });
 
-    // Add all .c/.cpp files from directory
     const has_cpp = addSourceFiles(b, exe, source_dir) catch |err| {
         std.debug.print("Error adding files: {}\n", .{err});
         return;
     };
 
-    // Link with appropriate libraries
     if (has_cpp) {
-        exe.linkLibCpp(); // For C++ files
+        exe.linkLibCpp();
     } else {
-        exe.linkLibC(); // For C files only
+        exe.linkLibC();
     }
 
-    // Install the resulting binary
     b.installArtifact(exe);
 
-    // Add "run" step for execution
     const run_cmd = b.addRunArtifact(exe);
     run_cmd.step.dependOn(b.getInstallStep());
 
@@ -46,8 +52,8 @@ pub fn build(b: *std.Build) void {
     run_step.dependOn(&run_cmd.step);
 }
 
-// Function to recursively add all source files
-// Returns true if any C++ files were found
+
+// Recursively add all C/C++ files
 fn addSourceFiles(
     b: *std.Build,
     exe: *std.Build.Step.Compile,
@@ -59,69 +65,45 @@ fn addSourceFiles(
     var walker = try dir.walk(b.allocator);
     defer walker.deinit();
 
-    // Zig 0.15.x: Use .{} initialization syntax
-    var source_files: std.ArrayList([]const u8) = .{};
-    defer source_files.deinit(b.allocator);
-
     var has_cpp_files = false;
 
-    std.debug.print("Searching for files in: {s}\n", .{dir_path});
+    std.debug.print("Searching in: {s}\n", .{dir_path});
 
     while (try walker.next()) |entry| {
-        if (entry.kind == .file) {
-            const ext = std.fs.path.extension(entry.basename);
+        if (entry.kind != .file) continue;
 
-            // Check for supported extensions
-            if (std.mem.eql(u8, ext, ".c") or
-                std.mem.eql(u8, ext, ".cpp") or
-                std.mem.eql(u8, ext, ".cc") or
-                std.mem.eql(u8, ext, ".cxx"))
-            {
-                // Track if we have any C++ files
-                if (std.mem.eql(u8, ext, ".cpp") or
-                    std.mem.eql(u8, ext, ".cc") or
-                    std.mem.eql(u8, ext, ".cxx"))
-                {
-                    has_cpp_files = true;
-                }
+        const ext = std.fs.path.extension(entry.basename);
 
-                const full_path = try std.fs.path.join(
-                    b.allocator,
-                    &[_][]const u8{ dir_path, entry.path },
-                );
-                try source_files.append(b.allocator, full_path);
-                std.debug.print("  Adding: {s}\n", .{full_path});
-            }
-        }
-    }
+        const is_c =
+            std.mem.eql(u8, ext, ".c");
 
-    if (source_files.items.len == 0) {
-        std.debug.print("WARNING: No source files found in {s}\n", .{dir_path});
-        return error.NoSourceFiles;
-    }
+        const is_cpp =
+            std.mem.eql(u8, ext, ".cpp") or
+            std.mem.eql(u8, ext, ".cc") or
+            std.mem.eql(u8, ext, ".cxx");
 
-    // Add all found files
-    for (source_files.items) |file| {
-        const ext = std.fs.path.extension(file);
+        if (!is_c and !is_cpp) continue;
 
-        // Determine if C or C++ based on extension
-        const is_cpp = std.mem.eql(u8, ext, ".cpp") or
-                       std.mem.eql(u8, ext, ".cc") or
-                       std.mem.eql(u8, ext, ".cxx");
+        if (is_cpp) has_cpp_files = true;
 
-        const std_flag = if (is_cpp) "-std=c++17" else "-std=c11";
+        const full_path = try std.fs.path.join(
+            b.allocator,
+            &[_][]const u8{ dir_path, entry.path },
+        );
+
+        const std_flag = if (is_cpp) "-std=c++23" else "-std=c11";
 
         exe.addCSourceFile(.{
-            .file = b.path(file),
+            .file = b.path(full_path),
             .flags = &[_][]const u8{
                 "-Wall",
                 "-Wextra",
                 std_flag,
             },
         });
-    }
 
-    std.debug.print("Total files to build: {}\n", .{source_files.items.len});
+        std.debug.print("  Adding: {s}\n", .{full_path});
+    }
 
     return has_cpp_files;
 }
